@@ -1,0 +1,18 @@
+# Python-specific
+__pycache__/
+*.pyc
+
+# FastAPI-specific
+__pycache__/
+.env
+
+# IDE-specific
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Dependency directories
+venv/
+env/

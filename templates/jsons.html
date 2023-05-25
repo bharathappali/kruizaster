@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Kruizaster</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='/css/bulma.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='/css/fontawesome.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='/css/kruizaster.css') }}">
+</head>
+<body>
+    <div id="loading-state" class="loading">Loading...</div>
+    <div class="h-screen-full w-screen-full" style="overflow-y: scroll">
+        <h1>Generated JSONs</h1>
+        <p>Number of JSONs: {{ num_days }}</p>
+        <div class="columns is-centered" >
+            <div class="column is-6">
+                {% for json_data in json_list %}
+                    <pre style="background: inherit">{{ json_data | json_indent }}</pre>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+document.addEventListener("readystatechange", function () {
+  if (document.readyState === "complete") {
+    document.getElementById("loading-state").style.display = "none";
+  }
+});
+
+</script>
+</html>

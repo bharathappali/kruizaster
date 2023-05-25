@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JSON Generation Status</title>
+    <script type="text/javascript">
+        const socket = new WebSocket(`ws://${window.location.host}/update_socket`);
+        socket.onmessage = function(event) {
+            const status = event.data;
+            document.getElementById("status").textContent = status;
+        };
+        socket.onclose = function(event) {
+            console.log("WebSocket connection closed.");
+        };
+    </script>
+</head>
+<body>
+    <h1>JSON Generation Status</h1>
+    <p id="status">Processing JSONs...</p>
+</body>
+</html>
