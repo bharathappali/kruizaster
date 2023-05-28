@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Kruizaster</title>
+  <link rel="stylesheet" href="{{ url_for('static', path='/css/bulma.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', path='/css/fontawesome.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', path='/css/kruizaster.css') }}">
+</head>
+<body>
+<div class="h-screen-7" style="padding: 1.25vh; background: #FFFFFF">
+  <nav class="level">
+    <div class="level-left">
+      <p class="level-item has-text-centered">
+        <a class="link text-center has-text-info is-info title">Kruizaster</a>
+      </p>
+    </div>
+    <div class="level-right">
+      <p class="level-item has-text-centered">
+        <a href="/view/{{ experiment_name }}" class="button is-link is-rounded is-outlined">Experiment View</a>
+      </p>
+      <p class="level-item has-text-centered">
+        <a href="/view/{{ experiment_name }}/result/{{ interval_end_time }}" class="button is-link is-rounded is-outlined">View Entries</a>
+      </p>
+      <p class="level-item has-text-centered">
+        <a href="/list_experiments" class="button is-link is-rounded is-outlined">List Experiments</a>
+      </p>
+      <p class="level-item has-text-centered">
+        <a href="/" class="button is-link is-rounded is-outlined">Create Disaster</a>
+      </p>
+    </div>
+  </nav>
+</div>
+<div class="w-100 h-screen-93">
+  <div class="columns is-desktop is-gapless h-100 is-centered">
+    <div class="column is-8">
+      <div class="columns w-100 h-100 is-vcentered">
+        <div class="column ">
+          <div class="columns is-centered">
+            <div class="column is-8 kruizaster-create-disaster-center-pane mask-dark-500">
+              <h1 class="text-center title is-4 text-white">Experiment Results</h1>
+              <div class="columns is-gapless">
+                Experiment Name: {{ experiment_name }}
+                Interval End Time: {{ interval_end_time }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+<script>
+
+</script>
+</html>

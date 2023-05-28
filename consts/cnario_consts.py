@@ -33,12 +33,15 @@ class Constants:
     INTERVAL_START_TIME                             = "interval_start_time"
     INTERVAL_END_TIME                               = "interval_end_time"
     TOTAL_ENTRIES                                   = "total_entries"
+    NUM_DAYS                                        = "num_days"
     CURRENT_ENTRY                                   = "current_entry"
     COMPLETED_ENTRIES                               = "completed_entries"
     ENTRY_MIN_LIST                                  = "entry_min_list"
     RECOMMENDATIONS_GENERATED                       = "recommendations_generated"
     UPDATE_RESULTS_SUCCESS                          = "update_results_success"
     UPDATE_RESULTS_FAILED                           = "update_results_failed"
+    MONITORING_START_TIME                           = "monitoring_start_time"
+    MONITORING_END_TIME                             = "monitoring_end_time"
 
     # Constants for metric names
     CPU_REQUEST                                     = "cpuRequest"
@@ -71,6 +74,8 @@ class Constants:
     NO_DISASTER                                     = "no_disaster"
     ZERO_CPUS_RECORDS                               = "zero_cpu_recording"
     ZERO_MEMORY_RECORDS                             = "zero_memory_recording"
+
+    SCENARIO                                        = "scenario"
 
     SCENARIOS                   = [
         DEFAULT,
@@ -160,8 +165,6 @@ class Constants:
     HOUR_1                                          = "1 " + HOURS.capitalize()
 
     INTERVAL_DURATION_OPTS                  = [
-        MINS_5,
-        MINS_10,
         MINS_15,
         MINS_30,
         MINS_45,
@@ -221,12 +224,29 @@ class Constants:
     UPLOADING_RESULTS                               = "Uploading Results"
     OBTAINED_RECOMMENDATIONS                        = "Obtained Recommendations"
 
+    # Url consts
+    URL_PARAM_SPECIFIER                             = "?"
+    URL_PARAM_ADDER                                 = "&"
+    URL_PARAM_VALUE_EQUAL                           = "="
+
+    MESSAGE                                         = "message"
+    UTF_8                                           = "utf-8"
+
+    # Messages
+    BACK_TO_HOME                                    = "Back To Home"
+    TRY_AGAIN                                       = "Try Again"
+
+    # Websocket status
+    UPDATE_RESULTS_STATUS                           = "update_results_status"
+    RECOMMENDATION_STATUS                           = "recommendations_status"
+
+
 
     class ServiceInfo:
         class Kruize:
             class ServicePaths:
                 BASE_URL                                = "http://192.168.49.2"
-                PORT                                    = 31554
+                PORT                                    = 32351
                 CREATE_EXP_PATH                         = "/createExperiment"
                 UPDATE_RESULTS_PATH                     = "/updateResults"
                 CREATE_PP_PATH                          = "/createPerformanceProfile"
@@ -236,6 +256,9 @@ class Constants:
                 ROOT                                    = "/"
                 CREATE_DISASTER                         = "/create_disaster"
                 TEST                                    = "/test"
-                UPDATES_SOCKET                          = "/update_socket"
+                UPDATES_SOCKET                          = "/update_socket/{experiment_name}"
+                VIEW_EXPERIMENT                         = "/view/{experiment_name}/"
+                VIEW_EXPERIMENT_RESULTS                 = "/view/{experiment_name}/result/{interval_end_time}"
+                LIST_EXPERIMENTS                        = "/list_experiments"
 
 

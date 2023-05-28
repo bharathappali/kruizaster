@@ -1,109 +1,127 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Kruizaster</title>
-    <link rel="stylesheet" href="{{ url_for('static', path='/css/bulma.min.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', path='/css/fa/css/all.min.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', path='/css/kruizaster.css') }}">
+  <title>Kruizaster</title>
+  <link rel="stylesheet" href="{{ url_for('static', path='/css/bulma.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', path='/css/fa/css/all.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', path='/css/kruizaster.css') }}">
 </head>
 <body>
-    <div class="columns is-desktop is-gapless h-screen-full is-centered">
-        <div class="column is-6">
-            <div class="columns w-100 h-100 is-vcentered">
-                <div class="column ">
-                    <div class="columns is-centered">
-                        <div class="column is-8 kruizaster-create-disaster-center-pane mask-dark-500">
-                            <h1 class="text-center title is-1 text-white">Kruizaster</h1>
-                            <div class="text-center subtitle text-white is-6">Disaster Creator for Kruize</div>
-                            <form action="{{ create_disaster_path }}" method="post" class="w-100">
-                                <div class="field">
-                                    <label for="experiment_name">Experiment Name</label>
-                                    <div class="control is-medium">
-                                        <input
-                                            class="input is-medium is-primary"
-                                            type="text"
-                                            placeholder="Experiment Name"
-                                            id="experiment_name"
-                                            name="experiment_name"
-                                            value="{{ experiment_name }}"
-                                            required>
-                                    </div>
-                                </div>
-                                <div class="columns">
-                                    <div class="column">
-                                        <div class="field">
-                                            <label for="num_days">No .of Days</label>
-                                            <div class="control is-medium">
-                                                <input
-                                                    class="input is-medium is-primary"
-                                                    type="number"
-                                                    placeholder="Number of Days"
-                                                    id="num_days"
-                                                    name="num_days"
-                                                    value="2"
-                                                    min="1"
-                                                    max="365"
-                                                    required>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="column">
-                                        <div class="field">
-                                            <label for="start_time">Start Time</label>
-                                            <div class="control is-medium">
-                                                <input
-                                                    class="input is-medium is-primary"
-                                                    type="datetime-local"
-                                                    step="0.001"
-                                                    id="start_time"
-                                                    name="start_time"
-                                                    required>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="columns">
-                                    <div class="column">
-                                        <div class="field">
-                                            <label for="scenario">Scenerio</label>
-                                            <div class="control is-medium">
-                                                <div class="select is-medium is-primary">
-                                                    <select id="scenario" name="scenario" required>
-                                                        {% for scenario in scenarios%}
-                                                            <option>{{ scenario }}</option>
-                                                        {% endfor %}
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="column">
-                                        <div class="field">
-                                            <label for="interval_duration">Interval Duration</label>
-                                            <div class="control is-medium">
-                                                <div class="select is-medium is-primary">
-                                                    <select id="interval_duration" name="interval_duration" required>
-                                                        {% for unit in interval_duration_opts %}
-                                                            <option>{{ unit }}</option>
-                                                        {% endfor %}
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="buttons w-100 is-centered">
-                                    <input type="submit" class="button is-primary" value="Create Disaster">
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+<div class="h-screen-7" style="padding: 1.25vh; background: #FFFFFF">
+  <nav class="level">
+    <div class="level-left">
+      <p class="level-item has-text-centered">
+        <a class="link text-center has-text-info is-info title">Kruizaster</a>
+      </p>
     </div>
+    <div class="level-right">
+      <p class="level-item has-text-centered">
+        <a href="/list_experiments" class="button is-link is-rounded is-outlined">List Experiments</a>
+      </p>
+    </div>
+  </nav>
+</div>
+<div class="w-100 h-screen-93">
+  <div class="columns is-desktop is-gapless h-100 is-centered">
+    <div class="column is-6">
+      <div class="columns w-100 h-100 is-vcentered">
+        <div class="column ">
+          <div class="columns is-centered">
+            <div class="column is-8 kruizaster-create-disaster-center-pane mask-dark-500">
+              <h1 class="text-center title is-1 text-white">Kruizaster</h1>
+              <div class="text-center subtitle text-white is-6">Disaster Creator for Kruize</div>
+              <form action="{{ create_disaster_path }}" method="post" class="w-100">
+                <div class="field">
+                  <label for="experiment_name">Experiment Name</label>
+                  <div class="control is-medium">
+                    <input
+                        class="input is-medium is-info"
+                        type="text"
+                        placeholder="Experiment Name"
+                        id="experiment_name"
+                        name="experiment_name"
+                        value="{{ experiment_name }}"
+                        required>
+                  </div>
+                </div>
+                <div class="columns">
+                  <div class="column">
+                    <div class="field">
+                      <label for="num_days">No .of Days</label>
+                      <div class="control is-medium">
+                        <input
+                            class="input is-medium is-info"
+                            type="number"
+                            placeholder="Number of Days"
+                            id="num_days"
+                            name="num_days"
+                            value="2"
+                            min="1"
+                            max="365"
+                            required>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="column">
+                    <div class="field">
+                      <label for="start_time">End Time</label>
+                      <div class="control is-medium">
+                        <input
+                            class="input is-medium is-info"
+                            type="datetime-local"
+                            step="0.001"
+                            id="start_time"
+                            name="start_time"
+                            required>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="columns">
+                  <div class="column">
+                    <div class="field">
+                      <label for="scenario">Scenerio</label>
+                      <div class="control is-medium">
+                        <div class="select is-medium is-info">
+                          <select id="scenario" name="scenario" required>
+                            {% for scenario in scenarios%}
+                            <option>{{ scenario }}</option>
+                            {% endfor %}
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="column">
+                    <div class="field">
+                      <label for="interval_duration">Interval Duration</label>
+                      <div class="control is-medium">
+                        <div class="select is-medium is-info">
+                          <select id="interval_duration" name="interval_duration" required>
+                            {% for unit in interval_duration_opts %}
+                            <option>{{ unit }}</option>
+                            {% endfor %}
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="buttons w-100 is-centered">
+                  <input type="submit" class="button is-info is-rounded" value="Create Disaster">
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 <script>
     document.getElementById('start_time').valueAsDate = new Date();
+
+
 </script>
 </body>
 </html>

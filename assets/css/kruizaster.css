@@ -120,6 +120,10 @@ body {
 	height: 5vh !important;
 }
 
+.h-screen-7 {
+    height: 7vh !important;
+}
+
 .h-screen-10 {
 	height: 10vh !important;
 }
@@ -190,6 +194,10 @@ body {
 
 .h-screen-95 {
 	height: 95vh !important;
+}
+
+.h-screen-93 {
+    height: 93vh !important;
 }
 
 .h-screen-full {
@@ -362,8 +370,42 @@ body {
     padding: 2rem;
 }
 
+.kruizaster-list-rec-center-pane {
+    color: #ffffff !important;
+    border-radius: 20px;
+    padding: 2rem;
+    max-height: 85vh;
+}
+.header-entry-column {
+    margin-top: 2px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.1)
+}
+
+.exp-entry-column {
+    padding: 15px;
+    border-radius: 10px;
+    transition: padding 0.3s ease;
+}
+
+.exp-entry-column:hover {
+    padding: 25px 15px 25px 15px;
+}
+
+.list-container {
+    max-height: 80vh;
+}
+
 .text-white {
     color: #FFFFFF !important;
+}
+
+.text-uppercase {
+    text-transform: uppercase;
+}
+
+.float-right {
+    float: right !important;
 }
 
 .loading {

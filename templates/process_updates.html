@@ -1,20 +1,82 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>JSON Generation Status</title>
-    <script type="text/javascript">
-        const socket = new WebSocket(`ws://${window.location.host}/update_socket`);
-        socket.onmessage = function(event) {
-            const status = event.data;
-            document.getElementById("status").textContent = status;
-        };
-        socket.onclose = function(event) {
-            console.log("WebSocket connection closed.");
-        };
-    </script>
+  <title>Kruizaster Error</title>
+  <link rel="stylesheet" href="{{ url_for('static', path='/css/bulma.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', path='/css/fa/css/all.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', path='/css/kruizaster.css') }}">
+
+  <script type="text/javascript">
+      const socket = new WebSocket(`ws://${window.location.host}/update_socket/{{ experiment_name }}`);
+      socket.onmessage = function(event) {
+          const blob = event.data;
+          blob.text().then(function(data_str) {
+              console.log(data_str);
+              const data_json = JSON.parse(data_str);
+              // Extract total entries
+              var total_entries = data_json.total_entries;
+              // Extract update results count
+              var current_update_result = data_json.update_results_status.current_entry
+              // Extract recommendations count
+              var current_recommendation_result = data_json.recommendations_status.current_entry
+
+              console.log(total_entries + " | " + current_update_result + " | " + current_recommendation_result);
+              document.getElementById("update_results_progress_text").textContent = current_update_result;
+              document.getElementById("update_results_progress").value = current_update_result;
+              document.getElementById("recommendation_progress_text").textContent = current_recommendation_result;
+              document.getElementById("recommendation_progress").value = current_recommendation_result;
+          });
+      };
+      socket.onclose = function(event) {
+          console.log("WebSocket connection closed.");
+          setTimeout(function() {
+              window.location.href = "/view/{{ experiment_name }}";
+          }, 500);
+      };
+  </script>
 </head>
 <body>
-    <h1>JSON Generation Status</h1>
-    <p id="status">Processing JSONs...</p>
+<div class="columns is-desktop is-gapless h-screen-full is-centered">
+  <div class="column is-8">
+    <div class="columns w-100 h-100 is-vcentered">
+      <div class="column ">
+        <div class="columns is-centered">
+          <div class="column is-8 kruizaster-create-disaster-center-pane mask-dark-500">
+            <h1 class="text-center title is-1 text-white">Kruizaster Status</h1>
+            <div class="columns">
+              <div class="column is-8">
+                <div class="text-center subtitle text-white">Experiment Name : {{ experiment_name }}</div>
+              </div>
+              <div class="column is-4">
+                <div class="text-center subtitle text-white">Results count: {{ total_entries }}</div>
+              </div>
+            </div>
+            <div class="w-100 text-uppercase spaced-bold text-white">Update result progress:
+              <div class="float-right">
+                <strong class="text-white" id="update_results_progress_text">0</strong>
+                <span>/</span>
+                <strong class="text-white">{{ total_entries }}</strong>
+              </div>
+            </div>
+            <progress class="progress is-large is-info" id="update_results_progress" value="0"
+                      max="{{ total_entries }}"></progress>
+            <div class="w-100 text-uppercase spaced-bold text-white">Recommendations progress:
+              <div class="float-right">
+                <strong class="text-white" id="recommendation_progress_text">0</strong>
+                <span>/</span>
+                <strong class="text-white">{{ total_entries }}</strong>
+              </div>
+            </div>
+            <progress class="progress is-large is-primary" id="recommendation_progress" value="0"
+                      max="{{ total_entries }}"></progress>
+            <div class="text-center subtitle text-white">Please do not refresh the page. You'll be redirected to
+              experiment dahsboard once the progress is completed.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 </body>
 </html>

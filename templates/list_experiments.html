@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Kruizaster - List Experiments</title>
+  <link rel="stylesheet" href="{{ url_for('static', path='/css/bulma.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', path='/css/fa/css/all.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', path='/css/kruizaster.css') }}">
+</head>
+<body>
+<div class="h-screen-7" style="padding: 1.25vh; background: #FFFFFF">
+  <nav class="level">
+    <div class="level-left">
+      <p class="level-item has-text-centered">
+        <a class="link text-center has-text-info is-info title">Kruizaster</a>
+      </p>
+    </div>
+    <div class="level-right">
+      <p class="level-item has-text-centered">
+        <a href="/" class="button is-link is-rounded is-outlined">Create Disaster</a>
+      </p>
+    </div>
+  </nav>
+</div>
+<div class="h-screen-93">
+  <div class="columns is-desktop h-100 is-gapless is-centered">
+    <div class="column is-10">
+      <div class="columns w-100 h-100 is-vcentered">
+        <div class="column h-screen-80">
+          <div class="columns is-centered">
+            <div class="column is-8 h-100 kruizaster-list-rec-center-pane mask-dark-500">
+              {% if exp_data_list|length == 0 %}
+              <div class="columns w-100 is-centered">
+                <div class="column">
+                  <h6 class="text-center">No Experiments found. Create one.</h6>
+                </div>
+              </div>
+              <div class="buttons w-100 is-centered">
+                <a href="/" class="button is-primary is-rounded">Create Disaster</a>
+              </div>
+              {% else %}
+              <div class="columns is-gapless w-100 header-entry-column">
+                <div class="column is-full">
+                  <div class="columns is-gapless" style="padding: 15px">
+                    <div class="column text-uppercase spaced-bold is-3 has-text-info">
+                      Experiment Name
+                    </div>
+                    <div class="column text-uppercase spaced-bold is-2 text-center has-text-info">
+                      Results
+                    </div>
+                    <div class="column text-uppercase spaced-bold is-2 text-center has-text-primary">
+                      Successful
+                    </div>
+                    <div class="column text-uppercase spaced-bold is-1 text-center has-text-danger">
+                      Failed
+                    </div>
+                    <div class="column text-uppercase spaced-bold is-1 text-center has-text-info">
+                      Days
+                    </div>
+                    <div class="column text-uppercase spaced-bold is-3 text-center has-text-info">
+                      Scenario
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="h-100 list-container scroll-vertical">
+                {% for exp_data in exp_data_list %}
+                <div class="columns is-gapless w-100">
+                  <div class="column is-full">
+                    <a href='{{ exp_data["path"] }}'>
+                      <div class="columns is-gapless mask-dark-300 exp-entry-column">
+                        <div class="column is-3 text-white">
+                          {{ exp_data["experiment_name"] }}
+                        </div>
+                        <div class="column is-2 text-white text-center">
+                          {{ exp_data["entries"] }}
+                        </div>
+                        <div class="column is-2 text-white text-center">
+                          {{ exp_data["success"] }}
+                        </div>
+                        <div class="column is-1 text-white text-center">
+                          {{ exp_data["failed"] }}
+                        </div>
+                        <div class="column is-1 text-white text-center">
+                          {{ exp_data["num_days"] }}
+                        </div>
+                        <div class="column is-3 text-white text-center">
+                          {{ exp_data["scenario"] }}
+                        </div>
+                      </div>
+                    </a>
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

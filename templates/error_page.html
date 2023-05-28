@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Kruizaster Error</title>
+  <link rel="stylesheet" href="{{ url_for('static', path='/css/bulma.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', path='/css/fa/css/all.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', path='/css/kruizaster.css') }}">
+</head>
+<body>
+<div class="columns is-desktop is-gapless h-screen-full is-centered">
+  <div class="column is-6">
+    <div class="columns w-100 h-100 is-vcentered">
+      <div class="column ">
+        <div class="columns is-centered">
+          <div class="column is-8 kruizaster-create-disaster-center-pane mask-dark-500">
+            <h1 class="text-center title is-1 text-white">Kruizaster Error</h1>
+            <div class="text-center subtitle text-white is-6">{{ error_msg }}</div>
+            <a href="{{ return_url }}" class="w-100">
+              <div class="buttons w-100 is-centered">
+                <input type="submit" class="button is-primary" value="{{ return_msg }}">
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

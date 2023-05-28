@@ -7,7 +7,7 @@ import random
 import sys
 import string
 import requests
-
+import httpx
 
 METRIC_VALUE_MAP = {
     KruizasterConsts.CPU_REQUEST: {
@@ -137,7 +137,7 @@ def create_kruize_experiment(exp_name: str, interval_time_in_mins: int):
             }
         ],
         "trial_settings": {
-            "measurement_duration": str(interval_time_in_mins)+"min"
+            "measurement_duration": str(interval_time_in_mins) + "min"
         },
         "recommendation_settings": {
             "threshold": "0.1"
@@ -146,20 +146,62 @@ def create_kruize_experiment(exp_name: str, interval_time_in_mins: int):
     response = requests.post(KruizasterSettings.KRUIZE_CREATE_EXP_URL, json=json_data)
 
     if response.status_code == 200 or response.status_code == 201:
-        print("Created Experiment successfully.")
+        #print(f"Created Experiment with name {exp_name} successfully")
+        pass
     else:
-        print("Error occurred in creating experiment. Status code:", response.status_code)
+        #print(f"Error occurred in creating experiment with name {exp_name}. Response code:  {response.status_code}")
+        pass
 
-    return response.status_code
+    return response.status_code, response.json()
 
 
-def update_kruize_results(results):
+def update_kruize_results(results: dict, exp_name: str, interval_end_time: str):
     results = [results]
     response = requests.post(KruizasterSettings.KRUIZE_UPDATE_RESULTS_URL, json=results)
 
     if response.status_code == 200 or response.status_code == 201:
-        print("Updated Results successfully.")
+        #print(f"Updated Results successfully for Experiment : {exp_name} and for timestamp : {interval_end_time}")
+        pass
     else:
-        print("Error occurred in updating results. Status code:", response.json())
+        #print(f"Error occurred in updating results for Experiment : {exp_name} and for timestamp : {interval_end_time}"
+              #+ f" with status code: {response.status_code}")
+        pass
     return response.status_code
 
+
+def get_url_with_params(base_url: str, params: dict):
+    if len(params) > 0:
+        url = base_url
+        check_first = True
+        for key, value in params.items():
+            if check_first:
+                url = url + KruizasterConsts.URL_PARAM_SPECIFIER + key + KruizasterConsts.URL_PARAM_VALUE_EQUAL + value
+                check_first = False
+            else:
+                url = url + KruizasterConsts.URL_PARAM_ADDER + key + KruizasterConsts.URL_PARAM_VALUE_EQUAL + value
+        return url
+    else:
+        return base_url
+
+
+def get_kruize_recommendations(exp_name: str, interval_end_time: str):
+    url_to_hit = get_url_with_params(
+            base_url=KruizasterSettings.KRUIZE_LIST_REC_URL,
+            params={
+                KruizasterConsts.EXPERIMENT_NAME: exp_name,
+                KruizasterConsts.MONITORING_END_TIME: interval_end_time
+            }
+        )
+    #print(f"Requesting Recommendations for Experiment : {exp_name} and for timestamp : {interval_end_time}"
+    #      + f" with URL - {url_to_hit}")
+    response = requests.get(url_to_hit)
+
+    if response.status_code == 200 or response.status_code == 201:
+        #print(f"Recommendations for Experiment : {exp_name} and for timestamp : {interval_end_time}"
+        #      + f" received successfully")
+        pass
+    else:
+        pass
+        #print(f'Request failed for Experiment : {exp_name} and for timestamp : {interval_end_time}'
+        #      + f' with status code : {response.status_code}')
+    return response.status_code, response.json()
