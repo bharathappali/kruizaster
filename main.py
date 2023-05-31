@@ -99,12 +99,13 @@ async def process_create_exp_update_results(websocket: WebSocket, experiment_nam
         update_results_response_code = Utils.update_kruize_results(results=update_results_template,
                                                                    exp_name=experiment_name,
                                                                    interval_end_time=end_time_string)
+
+        # print(f"Entry ID : {entry_id}, Update Results Code: {update_results_response_code}")
         with data_lock:
             if update_results_response_code == 200 or update_results_response_code == 201:
                 exp_data[experiment_name][KruizasterConsts.METADATA][KruizasterConsts.COMPLETED_ENTRIES] += 1
                 exp_data[experiment_name][KruizasterConsts.METADATA][KruizasterConsts.UPDATE_RESULTS_SUCCESS] += 1
-            else:
-                exp_data[experiment_name][KruizasterConsts.METADATA][KruizasterConsts.UPDATE_RESULTS_FAILED] += 1
+                exp_data[experiment_name][KruizasterConsts.METADATA][KruizasterConsts.UPDATE_RESULTS_FAILED] -= 1
             exp_data[experiment_name][KruizasterConsts.METADATA][KruizasterConsts.CURRENT_ENTRY] = entry_id
 
         # Check if day is greater than 1 and proceed to get recommendations
@@ -254,6 +255,7 @@ async def view_experiment(request: Request, experiment_name: str):
 async def view_result(request: Request, experiment_name: str, interval_end_time: str):
     with data_lock:
         if experiment_name in exp_data:
+            entry_min_list = exp_data[experiment_name][KruizasterConsts.METADATA][KruizasterConsts.ENTRY_MIN_LIST]
             results_map = exp_data[experiment_name][KruizasterConsts.KRUIZASTER_EXP_DATA][KruizasterConsts.KRUIZASTER_EXP_RESULTS]
             recommendations_map = exp_data[experiment_name][KruizasterConsts.KRUIZASTER_EXP_DATA][KruizasterConsts.KRUIZASTER_EXP_RECS]
             if interval_end_time in results_map and interval_end_time in recommendations_map:
@@ -262,7 +264,10 @@ async def view_result(request: Request, experiment_name: str, interval_end_time:
                     {
                         "request": request,
                         "experiment_name": experiment_name,
-                        "interval_end_time": interval_end_time
+                        "interval_end_time": interval_end_time,
+                        "entry_min_list": entry_min_list,
+                        "result_json": results_map[interval_end_time][KruizasterConsts.DATA],
+                        "recommendation_json": recommendations_map[interval_end_time][KruizasterConsts.DATA]
                     }
                 )
             else:
@@ -432,7 +437,7 @@ async def generate_jsons(request: Request,
                         KruizasterConsts.ENTRY_MIN_LIST: entry_min_list,
                         KruizasterConsts.RECOMMENDATIONS_GENERATED: 0,
                         KruizasterConsts.UPDATE_RESULTS_SUCCESS: 0,
-                        KruizasterConsts.UPDATE_RESULTS_FAILED: 0,
+                        KruizasterConsts.UPDATE_RESULTS_FAILED: total_entries,
                         KruizasterConsts.SCENARIO: scenario.strip()
                     },
                     KruizasterConsts.KRUIZASTER_EXP_DATA: {

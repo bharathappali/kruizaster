@@ -41,36 +41,34 @@
     <div class="columns w-100 h-100 is-vcentered">
       <div class="column ">
         <div class="columns is-centered">
-          <div class="column is-8 kruizaster-create-disaster-center-pane mask-dark-500">
+          <div class="column is-6 kruizaster-create-disaster-center-pane mask-dark-500">
             <h1 class="text-center title is-1 text-white">Kruizaster Status</h1>
-            <div class="columns">
-              <div class="column is-8">
-                <div class="text-center subtitle text-white">Experiment Name : {{ experiment_name }}</div>
+            <div style="margin-top: 10px">
+              <div class="text-white"><label class="text-uppercase spaced-bold">Experiment Name</label> : {{ experiment_name }}</div>
+              <br>
+              <div class="text-white"><label class="text-uppercase spaced-bold">Results count</label>: {{ total_entries }}</div>
+              <br>
+              <div class="w-100 text-uppercase spaced-bold text-white">Update result progress:
+                <div class="float-right">
+                  <strong class="text-white" id="update_results_progress_text">0</strong>
+                  <span>/</span>
+                  <strong class="text-white">{{ total_entries }}</strong>
+                </div>
               </div>
-              <div class="column is-4">
-                <div class="text-center subtitle text-white">Results count: {{ total_entries }}</div>
+              <progress class="progress is-large is-info" id="update_results_progress" value="0"
+                        max="{{ total_entries }}"></progress>
+              <div class="w-100 text-uppercase spaced-bold text-white">Recommendations progress:
+                <div class="float-right">
+                  <strong class="text-white" id="recommendation_progress_text">0</strong>
+                  <span>/</span>
+                  <strong class="text-white">{{ total_entries }}</strong>
+                </div>
               </div>
-            </div>
-            <div class="w-100 text-uppercase spaced-bold text-white">Update result progress:
-              <div class="float-right">
-                <strong class="text-white" id="update_results_progress_text">0</strong>
-                <span>/</span>
-                <strong class="text-white">{{ total_entries }}</strong>
+              <progress class="progress is-large is-primary" id="recommendation_progress" value="0"
+                        max="{{ total_entries }}"></progress>
+              <div class="text-center subtitle text-white">Please do not refresh the page. You'll be redirected to
+                experiment dahsboard once the progress is completed.
               </div>
-            </div>
-            <progress class="progress is-large is-info" id="update_results_progress" value="0"
-                      max="{{ total_entries }}"></progress>
-            <div class="w-100 text-uppercase spaced-bold text-white">Recommendations progress:
-              <div class="float-right">
-                <strong class="text-white" id="recommendation_progress_text">0</strong>
-                <span>/</span>
-                <strong class="text-white">{{ total_entries }}</strong>
-              </div>
-            </div>
-            <progress class="progress is-large is-primary" id="recommendation_progress" value="0"
-                      max="{{ total_entries }}"></progress>
-            <div class="text-center subtitle text-white">Please do not refresh the page. You'll be redirected to
-              experiment dahsboard once the progress is completed.
             </div>
           </div>
         </div>

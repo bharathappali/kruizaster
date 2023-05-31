@@ -19,7 +19,8 @@
         <a href="/view/{{ experiment_name }}" class="button is-link is-rounded is-outlined">Experiment View</a>
       </p>
       <p class="level-item has-text-centered">
-        <a href="/view/{{ experiment_name }}/result/{{ interval_end_time }}" class="button is-link is-rounded is-outlined">View Entries</a>
+        <a href="/view/{{ experiment_name }}/result/{{ interval_end_time }}"
+           class="button is-link is-rounded is-outlined">View Entries</a>
       </p>
       <p class="level-item has-text-centered">
         <a href="/list_experiments" class="button is-link is-rounded is-outlined">List Experiments</a>
@@ -31,26 +32,86 @@
   </nav>
 </div>
 <div class="w-100 h-screen-93">
-  <div class="columns is-desktop is-gapless h-100 is-centered">
-    <div class="column is-8">
-      <div class="columns w-100 h-100 is-vcentered">
-        <div class="column ">
-          <div class="columns is-centered">
-            <div class="column is-8 kruizaster-create-disaster-center-pane mask-dark-500">
-              <h1 class="text-center title is-4 text-white">Experiment Results</h1>
-              <div class="columns is-gapless">
-                Experiment Name: {{ experiment_name }}
-                Interval End Time: {{ interval_end_time }}
-              </div>
-            </div>
+  <div class="h-2">
+    <div class="columns is-desktop is-gapless is-centered">
+      <div class="column is-2 is-centered text-center">
+        <label class="spaced-bold text-uppercase text-white">Entries</label>
+      </div>
+      <div class="column is-5 is-centered text-center">
+        <label class="spaced-bold text-uppercase text-white">Results</label>
+      </div>
+      <div class="column is-5 is-centered text-center">
+        <label class="spaced-bold text-uppercase text-white">Recommendations</label>
+      </div>
+    </div>
+  </div>
+  <div class="h-98">
+    <div class="columns is-desktop is-gapless h-100">
+      <div class="column is-2 h-100">
+        <div class="h-100 result-block">
+          <div id="results_holder"
+               class="w-100 h-100 mask-dark-600 curved-border scroll-vertical p-sm text-white text-center">
+            {% for entry in entry_min_list %}
+            <a class="text-white" href='/view/{{ experiment_name }}/result/{{ entry["interval_end_time"] }}'>
+              {% if interval_end_time == entry["interval_end_time"] %}
+              <div id="active_result" class="p-sm mask-dark-300 result-block-item">
+                {% else %}
+                <div class="p-sm inactive-result result-block-item">
+                  {% endif %}
+                  <div class="columns is-gapless is-multiline is-centered">
+                    <div class="column is-size-7">
+                      Entry: {{ entry["entry_id"] }}
+                    </div>
+                    <div class="column is-size-7">
+                      Day: {{ entry["day"] }}
+                    </div>
+                    <div class="column is-size-7">
+                      Day ID: {{ entry["day_entry_id"] }}
+                    </div>
+                    <div class="column spaced-bold is-full">
+                      {{ entry["interval_end_time"] }}
+                    </div>
+                  </div>
+                </div>
+            </a>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      <div class="column is-5 h-100 result-block updates-block">
+        <div class="h-100 result-block updates-raw-block">
+          <div class="columns is-gapless h-100 mask-dark-600 curved-border">
+            <pre style="background: transparent; color: #FFFFFF" class="w-100 scroll-vertical">
+              {{ result_json | json_indent }}
+            </pre>
+          </div>
+        </div>
+      </div>
+      <div class="column is-5 h-100 result-block recommendation-block">
+        <div class="h-100 result-block recommendations-raw-block">
+          <div class="columns is-gapless h-100 mask-dark-600 curved-border">
+            <pre style="background: transparent; color: #FFFFFF" class="w-100 scroll-vertical">
+              {{ recommendation_json | json_indent }}
+            </pre>
           </div>
         </div>
       </div>
     </div>
   </div>
+
 </div>
 </body>
 <script>
+// Get the holder div and active element
+const holder_div = document.getElementById('results_holder');
+const active_element = document.getElementById('active_result');
+
+// Calculate the scroll position to the active element
+const scrollPosition = active_element.offsetTop - holder_div.offsetTop;
+
+// Scroll to the active element
+holder_div.scrollTop = scrollPosition - 10;
+
 
 </script>
 </html>

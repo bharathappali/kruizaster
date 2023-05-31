@@ -205,7 +205,7 @@ class Constants:
     MIN_MAX_MEMORY                                  = 500.00
     MAX_MAX_MEMORY                                  = MAX_MEMORY
 
-    MAX_PODS                                        = 20
+    MAX_PODS                                        = 1
     MIN_PODS                                        = 1
 
     AVAILABLE_FUNCS                                 = "available_functions"
@@ -246,7 +246,7 @@ class Constants:
         class Kruize:
             class ServicePaths:
                 BASE_URL                                = "http://192.168.49.2"
-                PORT                                    = 32351
+                PORT                                    = 30713
                 CREATE_EXP_PATH                         = "/createExperiment"
                 UPDATE_RESULTS_PATH                     = "/updateResults"
                 CREATE_PP_PATH                          = "/createPerformanceProfile"
