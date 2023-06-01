@@ -74,6 +74,7 @@ class Constants:
     NO_DISASTER                                     = "no_disaster"
     ZERO_CPUS_RECORDS                               = "zero_cpu_recording"
     ZERO_MEMORY_RECORDS                             = "zero_memory_recording"
+    IDLE_CPU                                        = "cpu_idle"
 
     SCENARIO                                        = "scenario"
 
@@ -81,7 +82,8 @@ class Constants:
         DEFAULT,
         NO_DISASTER,
         ZERO_CPUS_RECORDS,
-        ZERO_MEMORY_RECORDS
+        ZERO_MEMORY_RECORDS,
+        IDLE_CPU
     ]
 
     ADJECTIVES                  = [
@@ -196,6 +198,8 @@ class Constants:
     MAX_AVG_CPU                                     = 3.50
     MIN_MAX_CPU                                     = 2.00
     MAX_MAX_CPU                                     = MAX_CPU
+    IDLE_CPU_MIN                                    = 0.00001
+    IDLE_CPU_MAX                                    = 0.0001
 
     MIN_MEMORY                                      = 50.00
     MAX_MEMORY                                      = 999.00
@@ -240,13 +244,31 @@ class Constants:
     UPDATE_RESULTS_STATUS                           = "update_results_status"
     RECOMMENDATION_STATUS                           = "recommendations_status"
 
+    ERROR                                           = "ERROR"
+    HTTP_CODE                                       = "httpcode"
+
+    CONFIG                                          = "config"
+    REQUESTS                                        = "requests"
+    LIMITS                                          = "limits"
+    AMOUNT                                          = "amount"
+    CPU                                             = "cpu"
+    MEMORY                                          = "memory"
+    RECOMMENDATIONS                                 = "recommendations"
+
+    VARIATION                                       = "variation"
+    DURATION_BASED                                  = "duration_based"
+    SHORT_TERM                                      = "short_term"
+    MEDIUM_TERM                                     = "medium_term"
+    LONG_TERM                                       = "long_term"
+
+
 
 
     class ServiceInfo:
         class Kruize:
             class ServicePaths:
                 BASE_URL                                = "http://192.168.49.2"
-                PORT                                    = 30713
+                PORT                                    = 31869
                 CREATE_EXP_PATH                         = "/createExperiment"
                 UPDATE_RESULTS_PATH                     = "/updateResults"
                 CREATE_PP_PATH                          = "/createPerformanceProfile"

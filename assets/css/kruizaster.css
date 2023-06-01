@@ -448,6 +448,12 @@ body {
     background: rgba(0, 0, 0, 0.3) !important;
 }
 
+.flex-center {
+	display: flex;
+  	justify-content: center;
+  	align-items: center;
+}
+
 .loading {
   display: flex;
   align-items: center;

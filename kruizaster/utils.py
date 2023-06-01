@@ -115,6 +115,17 @@ def get_metric_data_template(metric: str, values: dict):
     return metric_data
 
 
+def get_ui_update_result_entry(metric_data: dict):
+    metric_name = metric_data[KruizasterConsts.NAME]
+    update_result_entry = {
+        KruizasterConsts.NAME: metric_name
+    }
+    for func in METRIC_VALUE_MAP[metric_name][KruizasterConsts.AVAILABLE_FUNCS]:
+        update_result_entry[func] = metric_data[KruizasterConsts.RESULTS][KruizasterConsts.AGGREGATION_INFO][func]
+
+    return update_result_entry
+
+
 def create_kruize_experiment(exp_name: str, interval_time_in_mins: int):
     json_data = [{
         "version": "1.0",
@@ -192,16 +203,14 @@ def get_kruize_recommendations(exp_name: str, interval_end_time: str):
                 KruizasterConsts.MONITORING_END_TIME: interval_end_time
             }
         )
-    #print(f"Requesting Recommendations for Experiment : {exp_name} and for timestamp : {interval_end_time}"
-    #      + f" with URL - {url_to_hit}")
-    response = requests.get(url_to_hit)
 
+    response = requests.get(url_to_hit)
+    return_val = None
     if response.status_code == 200 or response.status_code == 201:
-        #print(f"Recommendations for Experiment : {exp_name} and for timestamp : {interval_end_time}"
-        #      + f" received successfully")
-        pass
+        return_val = response.json()
+        if isinstance(return_val, list):
+            if len(return_val) > 0:
+                return_val = return_val[0]
     else:
-        pass
-        #print(f'Request failed for Experiment : {exp_name} and for timestamp : {interval_end_time}'
-        #      + f' with status code : {response.status_code}')
-    return response.status_code, response.json()
+        return_val = response.json()
+    return response.status_code, return_val

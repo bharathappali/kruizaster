@@ -5,6 +5,7 @@
   <link rel="stylesheet" href="{{ url_for('static', path='/css/bulma.min.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', path='/css/fontawesome.min.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', path='/css/kruizaster.css') }}">
+  <script src="{{ url_for('static', path='/js/charts.js') }}"></script>
 </head>
 <body>
 <div class="h-screen-7" style="padding: 1.25vh; background: #FFFFFF">
@@ -35,7 +36,7 @@
   <div class="h-2">
     <div class="columns is-desktop is-gapless is-centered">
       <div class="column is-2 is-centered text-center">
-        <label class="spaced-bold text-uppercase text-white">Entries</label>
+        <label class="spaced-bold text-uppercase text-white">Menu</label>
       </div>
       <div class="column is-5 is-centered text-center">
         <label class="spaced-bold text-uppercase text-white">Results</label>
@@ -49,50 +50,148 @@
     <div class="columns is-desktop is-gapless h-100">
       <div class="column is-2 h-100">
         <div class="h-100 result-block">
-          <div id="results_holder"
-               class="w-100 h-100 mask-dark-600 curved-border scroll-vertical p-sm text-white text-center">
-            {% for entry in entry_min_list %}
-            <a class="text-white" href='/view/{{ experiment_name }}/result/{{ entry["interval_end_time"] }}'>
-              {% if interval_end_time == entry["interval_end_time"] %}
-              <div id="active_result" class="p-sm mask-dark-300 result-block-item">
-                {% else %}
-                <div class="p-sm inactive-result result-block-item">
-                  {% endif %}
-                  <div class="columns is-gapless is-multiline is-centered">
-                    <div class="column is-size-7">
-                      Entry: {{ entry["entry_id"] }}
-                    </div>
-                    <div class="column is-size-7">
-                      Day: {{ entry["day"] }}
-                    </div>
-                    <div class="column is-size-7">
-                      Day ID: {{ entry["day_entry_id"] }}
-                    </div>
-                    <div class="column spaced-bold is-full">
-                      {{ entry["interval_end_time"] }}
+          <div class="h-10">
+            <div class="columns h-50 is-gapless is-centered" style="margin-bottom: 3px !important">
+              <div class="column">
+                <div class="buttons is-centered">
+                  <button class="button is-info is-light" id="show-raw">Raw</button>
+                  <button class="button is-info is-light" id="show-table">Table</button>
+                  <button class="button is-info is-light" id="show-chart">Chart</button>
+                </div>
+              </div>
+            </div>
+            <div class="columns h-50 is-centered">
+              <div class="column is-centered" style="text-align: center">
+                <label class="spaced-bold text-uppercase text-white">Entries</label>
+              </div>
+            </div>
+          </div>
+          <div class="h-90">
+            <div id="results_holder"
+                 class="w-100 h-100 mask-dark-600 curved-border scroll-vertical p-sm text-white text-center">
+              {% for entry in entry_min_list %}
+              <a class="text-white" href='/view/{{ experiment_name }}/result/{{ entry["interval_end_time"] }}'>
+                {% if interval_end_time == entry["interval_end_time"] %}
+                <div id="active_result" class="p-sm mask-dark-300 result-block-item">
+                  {% else %}
+                  <div class="p-sm inactive-result result-block-item">
+                    {% endif %}
+                    <div class="columns is-gapless is-multiline is-centered">
+                      <div class="column is-size-7">
+                        Entry: {{ entry["entry_id"] }}
+                      </div>
+                      <div class="column is-size-7">
+                        Day: {{ entry["day"] }}
+                      </div>
+                      <div class="column is-size-7">
+                        Day ID: {{ entry["day_entry_id"] }}
+                      </div>
+                      <div class="column spaced-bold is-full">
+                        {{ entry["interval_end_time"] }}
+                      </div>
                     </div>
                   </div>
-                </div>
-            </a>
-            {% endfor %}
+              </a>
+              {% endfor %}
+            </div>
           </div>
+
         </div>
       </div>
       <div class="column is-5 h-100 result-block updates-block">
-        <div class="h-100 result-block updates-raw-block">
+        <div class="h-100 result-block" id="updates-raw-block" style="display: block">
           <div class="columns is-gapless h-100 mask-dark-600 curved-border">
             <pre style="background: transparent; color: #FFFFFF" class="w-100 scroll-vertical">
               {{ result_json | json_indent }}
             </pre>
           </div>
         </div>
+        <div class="h-100 result-block" id="updates-table-block" style="display: none">
+          <div class="columns h-100 is-gapless mask-dark-600 curved-border">
+            <div class="column is-centered p-sm" style="padding: 20px !important">
+              <h1 class="subtitle is-5 text-white text-center w-100 spaced-bold text-uppercase">Update results table</h1>
+              <table class="table w-100 p-sm curved-border">
+                <thead>
+                <tr>
+                  <th class="spaced-bold text-uppercase">Metric</th>
+                  <th class="spaced-bold text-uppercase">Sum</th>
+                  <th class="spaced-bold text-uppercase">Min</th>
+                  <th class="spaced-bold text-uppercase">Avg</th>
+                  <th class="spaced-bold text-uppercase">Max</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for table_entry in update_result_table %}
+                <tr>
+                  <td>
+                    <strong>{{ table_entry["name"] }}</strong>
+                  </td>
+                  <td>
+                    {{ table_entry["sum"] or "-" }}
+                  </td>
+                  <td>
+                    {{ table_entry["min"] or "-" }}
+                  </td>
+                  <td>
+                    {{ table_entry["avg"] or "-" }}
+                  </td>
+                  <td>
+                    {{ table_entry["max"] or "-" }}
+                  </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="h-100 result-block" id="updates-chart-block" style="display: none">
+          <div class="columns is-gapless h-100 mask-dark-600 curved-border">
+            <div class="column h-100 is-centered p-sm" style="padding: 20px !important">
+              <h1 class="subtitle is-5 text-white text-center w-100 spaced-bold text-uppercase">Update results chart</h1>
+              <div class="columns h-screen-35">
+                <div class="column flex-center">
+                  <canvas id="update-results-cpu-chart-canvas"></canvas>
+                </div>
+              </div>
+              <div class="columns h-screen-35">
+                <div class="column flex-center">
+                  <canvas id="update-results-memory-chart-canvas"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="column is-5 h-100 result-block recommendation-block">
-        <div class="h-100 result-block recommendations-raw-block">
+        <div class="h-100 result-block" id="recommendations-raw-block" style="display: block">
           <div class="columns is-gapless h-100 mask-dark-600 curved-border">
             <pre style="background: transparent; color: #FFFFFF" class="w-100 scroll-vertical">
               {{ recommendation_json | json_indent }}
             </pre>
+          </div>
+        </div>
+        <div class="h-100 result-block" id="recommendations-table-block" style="display: none">
+          <div class="columns is-gapless h-100 mask-dark-600 curved-border">
+            <div class="column h-100 is-centered p-sm" style="padding: 20px !important">
+              <h1 class="subtitle is-5 text-white text-center w-100 spaced-bold text-uppercase">Recommendation table</h1>
+            </div>
+          </div>
+        </div>
+        <div class="h-100 result-block" id="recommendations-chart-block" style="display: none">
+          <div class="columns is-gapless h-100 mask-dark-600 curved-border">
+            <div class="column h-100 is-centered p-sm" style="padding: 20px !important">
+              <h1 class="subtitle is-5 text-white text-center w-100 spaced-bold text-uppercase">Recommendation chart</h1>
+              <h1 class="subtitle is-7 text-white text-center w-100 spaced-bold text-uppercase">Short Term</h1>
+              <div class="columns h-screen-30">
+                <div class="column flex-center">
+                  <canvas id="recommendation-cpu-chart-canvas"></canvas>
+                </div>
+                <div class="column flex-center">
+                  <canvas id="recommendation-memory-chart-canvas"></canvas>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -102,16 +201,317 @@
 </div>
 </body>
 <script>
-// Get the holder div and active element
-const holder_div = document.getElementById('results_holder');
-const active_element = document.getElementById('active_result');
+  // Get the holder div and active element
+  const holder_div = document.getElementById('results_holder');
+  const active_element = document.getElementById('active_result');
 
-// Calculate the scroll position to the active element
-const scrollPosition = active_element.offsetTop - holder_div.offsetTop;
+  // Calculate the scroll position to the active element
+  const scrollPosition = active_element.offsetTop - holder_div.offsetTop;
 
-// Scroll to the active element
-holder_div.scrollTop = scrollPosition - 10;
+  // Scroll to the active element
+  holder_div.scrollTop = scrollPosition - 10;
 
+  // Raw block of update results
+  var updates_raw_block = document.getElementById("updates-raw-block");
+  // Raw block of recommendations
+  var recommendations_raw_block = document.getElementById("recommendations-raw-block");
 
+  // Table block of update results
+  var updates_table_block = document.getElementById("updates-table-block");
+  // Table block of recommendations
+  var recommendations_table_block = document.getElementById("recommendations-table-block");
+
+  // Chart block of update results
+  var updates_chart_block = document.getElementById("updates-chart-block");
+  // Chart block of recommendations
+  var recommendations_chart_block = document.getElementById("recommendations-chart-block");
+
+  var rawButton = document.getElementById("show-raw");
+  var tableButton = document.getElementById("show-table");
+  var chartButton = document.getElementById("show-chart");
+
+  rawButton.addEventListener('click', function() {
+    // Hide table and chart
+    updates_table_block.style.display = 'none';
+    recommendations_table_block.style.display = 'none';
+    updates_chart_block.style.display = 'none';
+    recommendations_chart_block.style.display = 'none';
+
+    // Show raw
+    updates_raw_block.style.display = 'block';
+    recommendations_raw_block.style.display = 'block';
+  });
+
+  tableButton.addEventListener('click', function() {
+    // Hide raw and chart
+    updates_raw_block.style.display = 'none';
+    recommendations_raw_block.style.display = 'none';
+    updates_chart_block.style.display = 'none';
+    recommendations_chart_block.style.display = 'none';
+
+    // Show raw
+    updates_table_block.style.display = 'block';
+    recommendations_table_block.style.display = 'block';
+  });
+
+  chartButton.addEventListener('click', function() {
+    // Hide table and raw
+    updates_table_block.style.display = 'none';
+    recommendations_table_block.style.display = 'none';
+    updates_raw_block.style.display = 'none';
+    recommendations_raw_block.style.display = 'none';
+
+    // Show raw
+    updates_chart_block.style.display = 'block';
+    recommendations_chart_block.style.display = 'block';
+  });
+
+  // Get the data from Jinja2 array
+  var cpu_data = {{ chart_data_cpu | tojson }};
+
+  var memory_data = {{ chart_data_memory | tojson }};
+
+  var cpu_rec_data = {{ chart_data_rec_cpu | tojson }};
+
+  var memory_rec_data = {{ chart_data_rec_memory | tojson }};
+
+  console.log(cpu_rec_data);
+  console.log(memory_rec_data);
+
+  // Extract labels and values from the data
+  var cpu_labels = cpu_data.name;
+  var cpu_datasets = [
+        {
+          label: 'SUM',
+          data: cpu_data.sum,
+          backgroundColor: '#0079FF',
+          borderColor: '#0079FF',
+          borderWidth: 1
+        },
+        {
+          label: 'AVG',
+          data: cpu_data.avg,
+          backgroundColor: '#00DFA2',
+          borderColor: '#00DFA2',
+          borderWidth: 1
+        },
+        {
+          label: 'MIN',
+          data: cpu_data.min,
+          backgroundColor: '#F6FA70',
+          borderColor: '#F6FA70',
+          borderWidth: 1
+        },
+        {
+          label: 'MAX',
+          data: cpu_data.max,
+          backgroundColor: '#FF0060',
+          borderColor: '#FF0060',
+          borderWidth: 1
+        },
+    ];
+
+  // Extract labels and values from the data
+  var memory_labels = memory_data.name;
+  var memory_datasets = [
+        {
+          label: 'SUM',
+          data: memory_data.sum,
+          backgroundColor: '#0079FF',
+          borderColor: '#0079FF',
+          borderWidth: 1
+        },
+        {
+          label: 'AVG',
+          data: memory_data.avg,
+          backgroundColor: '#00DFA2',
+          borderColor: '#00DFA2',
+          borderWidth: 1
+        },
+        {
+          label: 'MIN',
+          data: memory_data.min,
+          backgroundColor: '#F6FA70',
+          borderColor: '#F6FA70',
+          borderWidth: 1
+        },
+        {
+          label: 'MAX',
+          data: memory_data.max,
+          backgroundColor: '#FF0060',
+          borderColor: '#FF0060',
+          borderWidth: 1
+        },
+    ];
+
+  var cpu_rec_labels = cpu_rec_data.labels;
+  var cpu_rec_datasets = [
+        {
+          label: "CPU cores",
+          data: cpu_rec_data.data,
+          backgroundColor: ['#00DFA2'],
+          borderColor: ['#00DFA2'],
+          borderWidth: 1
+        }
+  ];
+
+  var memory_rec_labels = memory_rec_data.labels;
+  var memory_rec_datasets = [
+        {
+          label: 'Memory MiB',
+          data: memory_rec_data.data,
+          backgroundColor:  ['#F6FA70'],
+          borderColor:  ['#F6FA70'],
+          borderWidth: 1
+        }
+  ];
+
+  // Create the chart
+  var ctx_cpu = document.getElementById('update-results-cpu-chart-canvas').getContext('2d');
+  var chart = new Chart(ctx_cpu, {
+    type: 'bar',
+    data: {
+      labels: cpu_labels,
+      datasets: cpu_datasets
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks:{
+            color: 'white'
+          },
+        },
+        x: {
+          ticks:{
+            color: 'white'
+          },
+        }
+      },
+      plugins: {
+        title: {
+          display: true,
+          text: 'CPU Metrics',
+          color: 'white'
+        },
+        legend: {
+          labels: {
+            color: 'white'
+          }
+        }
+      }
+    }
+  });
+
+  // Create the chart
+  var ctx_memory = document.getElementById('update-results-memory-chart-canvas').getContext('2d');
+  var chart = new Chart(ctx_memory, {
+    type: 'bar',
+    data: {
+      labels: memory_labels,
+      datasets: memory_datasets
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks:{
+            color: 'white'
+          },
+        },
+        x: {
+          ticks:{
+            color: 'white'
+          },
+        }
+      },
+      plugins: {
+        title: {
+          display: true,
+          text: 'Memory Metrics',
+          color: 'white'
+        },
+        legend: {
+          labels: {
+            color: 'white' // Change legend label color
+          }
+        }
+      }
+    }
+  });
+
+  // Create the chart
+  var ctx_cpu_rec = document.getElementById('recommendation-cpu-chart-canvas').getContext('2d');
+  var chart = new Chart(ctx_cpu_rec, {
+    type: 'bar',
+    data: {
+      labels: cpu_rec_labels,
+      datasets: cpu_rec_datasets
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks:{
+            color: 'white'
+          },
+        },
+        x: {
+          ticks:{
+            color: 'white'
+          },
+        }
+      },
+      plugins: {
+        title: {
+          display: true,
+          text: 'CPU Recommendations',
+          color: 'white'
+        },
+        legend: {
+          labels: {
+            color: 'white'
+          }
+        }
+      }
+    }
+  });
+
+  // Create the chart
+  var ctx_memory_rec = document.getElementById('recommendation-memory-chart-canvas').getContext('2d');
+  var chart = new Chart(ctx_memory_rec, {
+    type: 'bar',
+    data: {
+      labels: memory_rec_labels,
+      datasets: memory_rec_datasets
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks:{
+            color: 'white'
+          },
+        },
+        x: {
+          ticks:{
+            color: 'white'
+          },
+        }
+      },
+      plugins: {
+        title: {
+          display: true,
+          text: 'Memory Recommendations',
+          color: 'white'
+        },
+        legend: {
+          labels: {
+            color: 'white'
+          }
+        }
+      }
+    }
+  });
 </script>
 </html>

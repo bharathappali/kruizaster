@@ -253,24 +253,30 @@ async def view_experiment(request: Request, experiment_name: str):
 
 @app.get(KruizasterConsts.ServiceInfo.Kruizaster.ServicePaths.VIEW_EXPERIMENT_RESULTS)
 async def view_result(request: Request, experiment_name: str, interval_end_time: str):
+    # Result JSON
+    result_json = None
+    # recommendation JSON
+    recommendation_json = None
+    # Entry MIN LIST
+    entry_min_list = None
+    # Acquire Lock to access the exp_data
     with data_lock:
+        # Check if experiment name exists in experiment data
         if experiment_name in exp_data:
+            # Get the entry min list
             entry_min_list = exp_data[experiment_name][KruizasterConsts.METADATA][KruizasterConsts.ENTRY_MIN_LIST]
+            # get the results map
             results_map = exp_data[experiment_name][KruizasterConsts.KRUIZASTER_EXP_DATA][KruizasterConsts.KRUIZASTER_EXP_RESULTS]
+            # get the recommendation map
             recommendations_map = exp_data[experiment_name][KruizasterConsts.KRUIZASTER_EXP_DATA][KruizasterConsts.KRUIZASTER_EXP_RECS]
+            # Check if given interval exists for a experiment
             if interval_end_time in results_map and interval_end_time in recommendations_map:
-                return templates.TemplateResponse(
-                    "view_result.html",
-                    {
-                        "request": request,
-                        "experiment_name": experiment_name,
-                        "interval_end_time": interval_end_time,
-                        "entry_min_list": entry_min_list,
-                        "result_json": results_map[interval_end_time][KruizasterConsts.DATA],
-                        "recommendation_json": recommendations_map[interval_end_time][KruizasterConsts.DATA]
-                    }
-                )
+                # Load results in to results JSON
+                result_json = results_map[interval_end_time][KruizasterConsts.DATA]
+                # Load recommedations to recommendation JSON
+                recommendation_json = recommendations_map[interval_end_time][KruizasterConsts.DATA]
             else:
+                # Return error saying the interval time is not found
                 return templates.TemplateResponse(
                     "error_page.html",
                     {
@@ -280,16 +286,195 @@ async def view_result(request: Request, experiment_name: str, interval_end_time:
                         "return_msg": KruizasterConsts.BACK_TO_HOME
                     }
                 )
+        else:
+            # Return Experiment not available
+            return templates.TemplateResponse(
+                "error_page.html",
+                {
+                    "request": request,
+                    "error_msg": f"Experiment Name : {experiment_name} is invalid",
+                    "return_url": KruizasterConsts.ServiceInfo.Kruizaster.ServicePaths.ROOT,
+                    "return_msg": KruizasterConsts.BACK_TO_HOME
+                }
+            )
+        # Load all metrics
+        metric_list = result_json[KruizasterConsts.KUBERNETES_OBJECTS][0][KruizasterConsts.CONTAINERS][0][KruizasterConsts.METRICS]
+        # Content for update results table
+        update_result_table = []
+        # Entries for cpu results
+        name_array_cpu = []
+        sum_array_cpu = []
+        avg_array_cpu = []
+        min_array_cpu = []
+        max_array_cpu = []
+        # Entries for memory results
+        name_array_memory = []
+        sum_array_memory = []
+        avg_array_memory = []
+        min_array_memory = []
+        max_array_memory = []
+        # Short term CPU recommendation holder: [ CPU Request, CPU Limit, Current CPU Usage, Requests Variation, Limits Variation ]
+        st_req_lim_cpu_arr = [None, None, None, None, None]
+        # Short term Memory recommendation holder: [ Memory Request, Memory Limit, Current Memory Usage, Requests Variation, Limits Variation ]
+        st_req_lim_memory_arr = [None, None, None, None, None]
+        # Medium term CPU recommendation holder: [ CPU Request, CPU Limit, Current CPU Usage, Requests Variation, Limits Variation ]
+        mt_req_lim_cpu_arr = [None, None, None, None, None]
+        # Medium term Memory recommendation holder: [ Memory Request, Memory Limit, Current Memory Usage, Requests Variation, Limits Variation ]
+        mt_req_lim_memory_arr = [None, None, None, None, None]
+        # Long term CPU recommendation holder: [ CPU Request, CPU Limit, Current CPU Usage, Requests Variation, Limits Variation ]
+        lt_req_lim_cpu_arr = [None, None, None, None, None]
+        # Long term Memory recommendation holder: [ Memory Request, Memory Limit, Current Memory Usage, Requests Variation, Limits Variation ]
+        lt_req_lim_memory_arr = [None, None, None, None, None]
 
-    return templates.TemplateResponse(
-        "error_page.html",
-        {
-            "request": request,
-            "error_msg": f"Experiment Name : {experiment_name} is invalid",
-            "return_url": KruizasterConsts.ServiceInfo.Kruizaster.ServicePaths.ROOT,
-            "return_msg": KruizasterConsts.BACK_TO_HOME
+        # Iterate over the metrics list to load contents to update results entries
+        for entry in metric_list:
+            # Format the contents in required way by calling "get_ui_update_result_entry" function in Utils
+            update_result_entry = Utils.get_ui_update_result_entry(entry)
+            # Check if the update_result_entry is not None (Highly impossible scenario, most unlikely to happen)
+            if update_result_entry is not None:
+                # Update the list and add the update_result_entry
+                update_result_table.append(update_result_entry)
+                # Extract the metric_name
+                metric_name = update_result_entry[KruizasterConsts.NAME]
+                # Check if metric_name is a CPU Metrics
+                if metric_name in KruizasterConsts.CPU_METRICS:
+                    # Add name to name array
+                    name_array_cpu.append(metric_name)
+                    # If sum exists load sum
+                    if KruizasterConsts.SUM in update_result_entry:
+                        sum_array_cpu.append(update_result_entry[KruizasterConsts.SUM])
+                    else:
+                        sum_array_cpu.append(None)
+                    # If min exists load min
+                    if KruizasterConsts.MIN in update_result_entry:
+                        min_array_cpu.append(update_result_entry[KruizasterConsts.MIN])
+                    else:
+                        min_array_cpu.append(None)
+                    # If avg exists load avg
+                    if KruizasterConsts.AVG in update_result_entry:
+                        avg_array_cpu.append(update_result_entry[KruizasterConsts.AVG])
+                        # If the metric is cpu usage, record it in 3rd index of short term, medium term and long term
+                        if metric_name == KruizasterConsts.CPU_USAGE:
+                            st_req_lim_cpu_arr[2] = update_result_entry[KruizasterConsts.AVG]
+                            mt_req_lim_cpu_arr[2] = update_result_entry[KruizasterConsts.AVG]
+                            lt_req_lim_cpu_arr[2] = update_result_entry[KruizasterConsts.AVG]
+                    else:
+                        avg_array_cpu.append(None)
+                    # If max exists load max
+                    if KruizasterConsts.MAX in update_result_entry:
+                        max_array_cpu.append(update_result_entry[KruizasterConsts.MAX])
+                    else:
+                        max_array_cpu.append(None)
+                # Check if metric_name is a Memory Metrics
+                if metric_name in KruizasterConsts.MEMORY_METRICS:
+                    # Add name to name array
+                    name_array_memory.append(metric_name)
+                    # If sum exists load sum
+                    if KruizasterConsts.SUM in update_result_entry:
+                        sum_array_memory.append(update_result_entry[KruizasterConsts.SUM])
+                    else:
+                        sum_array_memory.append(None)
+                    # If min exists load min
+                    if KruizasterConsts.MIN in update_result_entry:
+                        min_array_memory.append(update_result_entry[KruizasterConsts.MIN])
+                    else:
+                        min_array_memory.append(None)
+                    # If avg exists load avg
+                    if KruizasterConsts.AVG in update_result_entry:
+                        avg_array_memory.append(update_result_entry[KruizasterConsts.AVG])
+                        # If the metric is memory usage, record it in 3rd index of short term, medium term and long term
+                        if metric_name == KruizasterConsts.MEMORY_USAGE:
+                            st_req_lim_memory_arr[2] = update_result_entry[KruizasterConsts.AVG]
+                    else:
+                        avg_array_memory.append(None)
+                    # If max exists load max
+                    if KruizasterConsts.MAX in update_result_entry:
+                        max_array_memory.append(update_result_entry[KruizasterConsts.MAX])
+                    else:
+                        max_array_memory.append(None)
+        # Add the labels
+        config_labels = ["Config Request", "Config Limit", "Current Usage", "Variation Request", "Variation Limit"]
+        # chart data for cpu recommendations
+        chart_data_rec_cpu = None
+        # chart data for memory recommendations
+        chart_data_rec_memory = None
+
+        # Check if we have recommendation
+        if KruizasterConsts.STATUS not in recommendation_json and KruizasterConsts.HTTP_CODE not in recommendation_json:
+            recommendations = recommendation_json[KruizasterConsts.KUBERNETES_OBJECTS][0][KruizasterConsts.CONTAINERS][0][KruizasterConsts.RECOMMENDATIONS]
+            # Check if we have recommendation
+            if interval_end_time in recommendations[KruizasterConsts.DATA]:
+                # Check if we have Duration based recommendations
+                if KruizasterConsts.DURATION_BASED in recommendations[KruizasterConsts.DATA][interval_end_time]:
+                    duration_based_rec = recommendations[KruizasterConsts.DATA][interval_end_time][KruizasterConsts.DURATION_BASED]
+                    # Check if config is available
+                    if KruizasterConsts.CONFIG in duration_based_rec[KruizasterConsts.SHORT_TERM]:
+                        config = duration_based_rec[KruizasterConsts.SHORT_TERM][KruizasterConsts.CONFIG]
+                        #
+                        if KruizasterConsts.REQUESTS in config:
+                            if KruizasterConsts.CPU in config[KruizasterConsts.REQUESTS]:
+                                st_req_lim_cpu_arr[0] = round(config[KruizasterConsts.REQUESTS][KruizasterConsts.CPU][KruizasterConsts.AMOUNT], 2)
+                            if KruizasterConsts.MEMORY in config[KruizasterConsts.REQUESTS]:
+                                st_req_lim_memory_arr[0] = round(config[KruizasterConsts.REQUESTS][KruizasterConsts.MEMORY][KruizasterConsts.AMOUNT], 2)
+                        if KruizasterConsts.LIMITS in config:
+                            if KruizasterConsts.CPU in config[KruizasterConsts.LIMITS]:
+                                st_req_lim_cpu_arr[1] = round(config[KruizasterConsts.LIMITS][KruizasterConsts.CPU][KruizasterConsts.AMOUNT], 2)
+                            if KruizasterConsts.MEMORY in config[KruizasterConsts.LIMITS]:
+                                st_req_lim_memory_arr[1] = round(config[KruizasterConsts.LIMITS][KruizasterConsts.MEMORY][KruizasterConsts.AMOUNT], 2)
+                    if KruizasterConsts.VARIATION in duration_based_rec[KruizasterConsts.SHORT_TERM]:
+                        config = duration_based_rec[KruizasterConsts.SHORT_TERM][KruizasterConsts.VARIATION]
+                        if KruizasterConsts.REQUESTS in config:
+                            if KruizasterConsts.CPU in config[KruizasterConsts.REQUESTS]:
+                                st_req_lim_cpu_arr[3] = round(config[KruizasterConsts.REQUESTS][KruizasterConsts.CPU][KruizasterConsts.AMOUNT], 2)
+                            if KruizasterConsts.MEMORY in config[KruizasterConsts.REQUESTS]:
+                                st_req_lim_memory_arr[3] = round(config[KruizasterConsts.REQUESTS][KruizasterConsts.MEMORY][KruizasterConsts.AMOUNT], 2)
+                        if KruizasterConsts.LIMITS in config:
+                            if KruizasterConsts.CPU in config[KruizasterConsts.LIMITS]:
+                                st_req_lim_cpu_arr[4] = round(config[KruizasterConsts.LIMITS][KruizasterConsts.CPU][KruizasterConsts.AMOUNT], 2)
+                            if KruizasterConsts.MEMORY in config[KruizasterConsts.LIMITS]:
+                                st_req_lim_memory_arr[4] = round(config[KruizasterConsts.LIMITS][KruizasterConsts.MEMORY][KruizasterConsts.AMOUNT], 2)
+                    chart_data_rec_cpu = {
+                        "labels": config_labels,
+                        "data": st_req_lim_cpu_arr
+                    }
+                    chart_data_rec_memory = {
+                        "labels": config_labels,
+                        "data": st_req_lim_memory_arr
+                    }
+
+
+        chart_data_cpu = {
+            KruizasterConsts.NAME: name_array_cpu,
+            KruizasterConsts.SUM: sum_array_cpu,
+            KruizasterConsts.MIN: min_array_cpu,
+            KruizasterConsts.AVG: avg_array_cpu,
+            KruizasterConsts.MAX: max_array_cpu
         }
-    )
+
+        chart_data_memory = {
+            KruizasterConsts.NAME: name_array_memory,
+            KruizasterConsts.SUM: sum_array_memory,
+            KruizasterConsts.MIN: min_array_memory,
+            KruizasterConsts.AVG: avg_array_memory,
+            KruizasterConsts.MAX: max_array_memory
+        }
+        return templates.TemplateResponse(
+            "view_result.html",
+            {
+                "request": request,
+                "experiment_name": experiment_name,
+                "interval_end_time": interval_end_time,
+                "entry_min_list": entry_min_list,
+                "result_json": result_json,
+                "recommendation_json": recommendation_json,
+                "update_result_table": update_result_table,
+                "chart_data_cpu": chart_data_cpu,
+                "chart_data_memory": chart_data_memory,
+                "chart_data_rec_cpu": chart_data_rec_cpu,
+                "chart_data_rec_memory": chart_data_rec_memory
+            }
+        )
+
 
 @app.get(KruizasterConsts.ServiceInfo.Kruizaster.ServicePaths.LIST_EXPERIMENTS)
 async def list_experiments(request: Request):
