@@ -98,7 +98,9 @@ async def process_create_exp_update_results(websocket: WebSocket, experiment_nam
         # Proceed to update kruize results
         update_results_response_code = Utils.update_kruize_results(results=update_results_template,
                                                                    exp_name=experiment_name,
-                                                                   interval_end_time=end_time_string)
+                                                                   interval_end_time=end_time_string,
+                                                                   entry_id=entry_id,
+                                                                   scenario=scenario)
 
         # print(f"Entry ID : {entry_id}, Update Results Code: {update_results_response_code}")
         with data_lock:
@@ -385,6 +387,8 @@ async def view_result(request: Request, experiment_name: str, interval_end_time:
                         # If the metric is memory usage, record it in 3rd index of short term, medium term and long term
                         if metric_name == KruizasterConsts.MEMORY_USAGE:
                             st_req_lim_memory_arr[2] = update_result_entry[KruizasterConsts.AVG]
+                            mt_req_lim_memory_arr[2] = update_result_entry[KruizasterConsts.AVG]
+                            lt_req_lim_memory_arr[2] = update_result_entry[KruizasterConsts.AVG]
                     else:
                         avg_array_memory.append(None)
                     # If max exists load max
@@ -394,10 +398,18 @@ async def view_result(request: Request, experiment_name: str, interval_end_time:
                         max_array_memory.append(None)
         # Add the labels
         config_labels = ["Config Request", "Config Limit", "Current Usage", "Variation Request", "Variation Limit"]
-        # chart data for cpu recommendations
-        chart_data_rec_cpu = None
-        # chart data for memory recommendations
-        chart_data_rec_memory = None
+        # chart data for short term cpu recommendations
+        chart_data_rec_st_cpu = None
+        # chart data for short term memory recommendations
+        chart_data_rec_st_memory = None
+        # chart data for medium term cpu recommendations
+        chart_data_rec_mt_cpu = None
+        # chart data for medium term memory recommendations
+        chart_data_rec_mt_memory = None
+        # chart data for long term cpu recommendations
+        chart_data_rec_lt_cpu = None
+        # chart data for long term memory recommendations
+        chart_data_rec_lt_memory = None
 
         # Check if we have recommendation
         if KruizasterConsts.STATUS not in recommendation_json and KruizasterConsts.HTTP_CODE not in recommendation_json:
@@ -407,39 +419,179 @@ async def view_result(request: Request, experiment_name: str, interval_end_time:
                 # Check if we have Duration based recommendations
                 if KruizasterConsts.DURATION_BASED in recommendations[KruizasterConsts.DATA][interval_end_time]:
                     duration_based_rec = recommendations[KruizasterConsts.DATA][interval_end_time][KruizasterConsts.DURATION_BASED]
-                    # Check if config is available
+                    # Check if config is available short term
                     if KruizasterConsts.CONFIG in duration_based_rec[KruizasterConsts.SHORT_TERM]:
                         config = duration_based_rec[KruizasterConsts.SHORT_TERM][KruizasterConsts.CONFIG]
-                        #
+                        # Check if requests available
                         if KruizasterConsts.REQUESTS in config:
+                            # Check if CPU requests available
                             if KruizasterConsts.CPU in config[KruizasterConsts.REQUESTS]:
                                 st_req_lim_cpu_arr[0] = round(config[KruizasterConsts.REQUESTS][KruizasterConsts.CPU][KruizasterConsts.AMOUNT], 2)
+                            # Check if Memory requests available
                             if KruizasterConsts.MEMORY in config[KruizasterConsts.REQUESTS]:
                                 st_req_lim_memory_arr[0] = round(config[KruizasterConsts.REQUESTS][KruizasterConsts.MEMORY][KruizasterConsts.AMOUNT], 2)
+                        # Check if limits available
                         if KruizasterConsts.LIMITS in config:
+                            # Check if CPU Limits available
                             if KruizasterConsts.CPU in config[KruizasterConsts.LIMITS]:
                                 st_req_lim_cpu_arr[1] = round(config[KruizasterConsts.LIMITS][KruizasterConsts.CPU][KruizasterConsts.AMOUNT], 2)
+                            # Check if Memory Limits available
                             if KruizasterConsts.MEMORY in config[KruizasterConsts.LIMITS]:
                                 st_req_lim_memory_arr[1] = round(config[KruizasterConsts.LIMITS][KruizasterConsts.MEMORY][KruizasterConsts.AMOUNT], 2)
+                    # Check if variation is available in short term
                     if KruizasterConsts.VARIATION in duration_based_rec[KruizasterConsts.SHORT_TERM]:
-                        config = duration_based_rec[KruizasterConsts.SHORT_TERM][KruizasterConsts.VARIATION]
+                        variation = duration_based_rec[KruizasterConsts.SHORT_TERM][KruizasterConsts.VARIATION]
+                        # Check if requests available
+                        if KruizasterConsts.REQUESTS in variation:
+                            # Check if CPU requests available
+                            if KruizasterConsts.CPU in variation[KruizasterConsts.REQUESTS]:
+                                st_req_lim_cpu_arr[3] = round(variation[KruizasterConsts.REQUESTS][KruizasterConsts.CPU][KruizasterConsts.AMOUNT], 2)
+                            # Check if Memory requests available
+                            if KruizasterConsts.MEMORY in variation[KruizasterConsts.REQUESTS]:
+                                st_req_lim_memory_arr[3] = round(variation[KruizasterConsts.REQUESTS][KruizasterConsts.MEMORY][KruizasterConsts.AMOUNT], 2)
+                        # Check if limits available
+                        if KruizasterConsts.LIMITS in variation:
+                            # Check if CPU Limits available
+                            if KruizasterConsts.CPU in variation[KruizasterConsts.LIMITS]:
+                                st_req_lim_cpu_arr[4] = round(variation[KruizasterConsts.LIMITS][KruizasterConsts.CPU][KruizasterConsts.AMOUNT], 2)
+                            # Check if Memory Limits available
+                            if KruizasterConsts.MEMORY in variation[KruizasterConsts.LIMITS]:
+                                st_req_lim_memory_arr[4] = round(variation[KruizasterConsts.LIMITS][KruizasterConsts.MEMORY][KruizasterConsts.AMOUNT], 2)
+
+                    # Check if config is available medium term
+                    if KruizasterConsts.CONFIG in duration_based_rec[KruizasterConsts.MEDIUM_TERM]:
+                        config = duration_based_rec[KruizasterConsts.MEDIUM_TERM][KruizasterConsts.CONFIG]
+                        # Check if requests available
                         if KruizasterConsts.REQUESTS in config:
+                            # Check if CPU requests available
                             if KruizasterConsts.CPU in config[KruizasterConsts.REQUESTS]:
-                                st_req_lim_cpu_arr[3] = round(config[KruizasterConsts.REQUESTS][KruizasterConsts.CPU][KruizasterConsts.AMOUNT], 2)
+                                mt_req_lim_cpu_arr[0] = round(
+                                    config[KruizasterConsts.REQUESTS][KruizasterConsts.CPU][
+                                        KruizasterConsts.AMOUNT], 2)
+                            # Check if Memory requests available
                             if KruizasterConsts.MEMORY in config[KruizasterConsts.REQUESTS]:
-                                st_req_lim_memory_arr[3] = round(config[KruizasterConsts.REQUESTS][KruizasterConsts.MEMORY][KruizasterConsts.AMOUNT], 2)
+                                mt_req_lim_memory_arr[0] = round(
+                                    config[KruizasterConsts.REQUESTS][KruizasterConsts.MEMORY][
+                                        KruizasterConsts.AMOUNT], 2)
+                        # Check if limits available
                         if KruizasterConsts.LIMITS in config:
+                            # Check if CPU Limits available
                             if KruizasterConsts.CPU in config[KruizasterConsts.LIMITS]:
-                                st_req_lim_cpu_arr[4] = round(config[KruizasterConsts.LIMITS][KruizasterConsts.CPU][KruizasterConsts.AMOUNT], 2)
+                                mt_req_lim_cpu_arr[1] = round(
+                                    config[KruizasterConsts.LIMITS][KruizasterConsts.CPU][
+                                        KruizasterConsts.AMOUNT], 2)
+                            # Check if Memory Limits available
                             if KruizasterConsts.MEMORY in config[KruizasterConsts.LIMITS]:
-                                st_req_lim_memory_arr[4] = round(config[KruizasterConsts.LIMITS][KruizasterConsts.MEMORY][KruizasterConsts.AMOUNT], 2)
-                    chart_data_rec_cpu = {
+                                mt_req_lim_memory_arr[1] = round(
+                                    config[KruizasterConsts.LIMITS][KruizasterConsts.MEMORY][
+                                        KruizasterConsts.AMOUNT], 2)
+                    # Check if variation is available in short term
+                    if KruizasterConsts.VARIATION in duration_based_rec[KruizasterConsts.MEDIUM_TERM]:
+                        variation = duration_based_rec[KruizasterConsts.MEDIUM_TERM][
+                            KruizasterConsts.VARIATION]
+                        # Check if requests available
+                        if KruizasterConsts.REQUESTS in variation:
+                            # Check if CPU requests available
+                            if KruizasterConsts.CPU in variation[KruizasterConsts.REQUESTS]:
+                                mt_req_lim_cpu_arr[3] = round(
+                                    variation[KruizasterConsts.REQUESTS][KruizasterConsts.CPU][
+                                        KruizasterConsts.AMOUNT], 2)
+                            # Check if Memory requests available
+                            if KruizasterConsts.MEMORY in variation[KruizasterConsts.REQUESTS]:
+                                mt_req_lim_memory_arr[3] = round(
+                                    variation[KruizasterConsts.REQUESTS][KruizasterConsts.MEMORY][
+                                        KruizasterConsts.AMOUNT], 2)
+                        # Check if limits available
+                        if KruizasterConsts.LIMITS in variation:
+                            # Check if CPU Limits available
+                            if KruizasterConsts.CPU in variation[KruizasterConsts.LIMITS]:
+                                mt_req_lim_cpu_arr[4] = round(
+                                    variation[KruizasterConsts.LIMITS][KruizasterConsts.CPU][
+                                        KruizasterConsts.AMOUNT], 2)
+                            # Check if Memory Limits available
+                            if KruizasterConsts.MEMORY in variation[KruizasterConsts.LIMITS]:
+                                mt_req_lim_memory_arr[4] = round(
+                                    variation[KruizasterConsts.LIMITS][KruizasterConsts.MEMORY][
+                                        KruizasterConsts.AMOUNT], 2)
+
+                    # Check if config is available Long Term
+                    if KruizasterConsts.CONFIG in duration_based_rec[KruizasterConsts.LONG_TERM]:
+                        config = duration_based_rec[KruizasterConsts.LONG_TERM][KruizasterConsts.CONFIG]
+                        # Check if requests available
+                        if KruizasterConsts.REQUESTS in config:
+                            # Check if CPU requests available
+                            if KruizasterConsts.CPU in config[KruizasterConsts.REQUESTS]:
+                                lt_req_lim_cpu_arr[0] = round(
+                                    config[KruizasterConsts.REQUESTS][KruizasterConsts.CPU][
+                                        KruizasterConsts.AMOUNT], 2)
+                            # Check if Memory requests available
+                            if KruizasterConsts.MEMORY in config[KruizasterConsts.REQUESTS]:
+                                lt_req_lim_memory_arr[0] = round(
+                                    config[KruizasterConsts.REQUESTS][KruizasterConsts.MEMORY][
+                                        KruizasterConsts.AMOUNT], 2)
+                        # Check if limits available
+                        if KruizasterConsts.LIMITS in config:
+                            # Check if CPU Limits available
+                            if KruizasterConsts.CPU in config[KruizasterConsts.LIMITS]:
+                                lt_req_lim_cpu_arr[1] = round(
+                                    config[KruizasterConsts.LIMITS][KruizasterConsts.CPU][
+                                        KruizasterConsts.AMOUNT], 2)
+                            # Check if Memory Limits available
+                            if KruizasterConsts.MEMORY in config[KruizasterConsts.LIMITS]:
+                                lt_req_lim_memory_arr[1] = round(
+                                    config[KruizasterConsts.LIMITS][KruizasterConsts.MEMORY][
+                                        KruizasterConsts.AMOUNT], 2)
+                    # Check if variation is available in Long Term
+                    if KruizasterConsts.VARIATION in duration_based_rec[KruizasterConsts.LONG_TERM]:
+                        variation = duration_based_rec[KruizasterConsts.LONG_TERM][
+                            KruizasterConsts.VARIATION]
+                        # Check if requests available
+                        if KruizasterConsts.REQUESTS in variation:
+                            # Check if CPU requests available
+                            if KruizasterConsts.CPU in variation[KruizasterConsts.REQUESTS]:
+                                lt_req_lim_cpu_arr[3] = round(
+                                    variation[KruizasterConsts.REQUESTS][KruizasterConsts.CPU][
+                                        KruizasterConsts.AMOUNT], 2)
+                            # Check if Memory requests available
+                            if KruizasterConsts.MEMORY in variation[KruizasterConsts.REQUESTS]:
+                                lt_req_lim_memory_arr[3] = round(
+                                    variation[KruizasterConsts.REQUESTS][KruizasterConsts.MEMORY][
+                                        KruizasterConsts.AMOUNT], 2)
+                        # Check if limits available
+                        if KruizasterConsts.LIMITS in variation:
+                            # Check if CPU Limits available
+                            if KruizasterConsts.CPU in variation[KruizasterConsts.LIMITS]:
+                                lt_req_lim_cpu_arr[4] = round(
+                                    variation[KruizasterConsts.LIMITS][KruizasterConsts.CPU][
+                                        KruizasterConsts.AMOUNT], 2)
+                            # Check if Memory Limits available
+                            if KruizasterConsts.MEMORY in variation[KruizasterConsts.LIMITS]:
+                                lt_req_lim_memory_arr[4] = round(
+                                    variation[KruizasterConsts.LIMITS][KruizasterConsts.MEMORY][
+                                        KruizasterConsts.AMOUNT], 2)
+                    chart_data_rec_st_cpu = {
                         "labels": config_labels,
                         "data": st_req_lim_cpu_arr
                     }
-                    chart_data_rec_memory = {
+                    chart_data_rec_st_memory = {
                         "labels": config_labels,
                         "data": st_req_lim_memory_arr
+                    }
+                    chart_data_rec_mt_cpu = {
+                        "labels": config_labels,
+                        "data": mt_req_lim_cpu_arr
+                    }
+                    chart_data_rec_mt_memory = {
+                        "labels": config_labels,
+                        "data": mt_req_lim_memory_arr
+                    }
+                    chart_data_rec_lt_cpu = {
+                        "labels": config_labels,
+                        "data": lt_req_lim_cpu_arr
+                    }
+                    chart_data_rec_lt_memory = {
+                        "labels": config_labels,
+                        "data": lt_req_lim_memory_arr
                     }
 
 
@@ -470,8 +622,12 @@ async def view_result(request: Request, experiment_name: str, interval_end_time:
                 "update_result_table": update_result_table,
                 "chart_data_cpu": chart_data_cpu,
                 "chart_data_memory": chart_data_memory,
-                "chart_data_rec_cpu": chart_data_rec_cpu,
-                "chart_data_rec_memory": chart_data_rec_memory
+                "chart_data_rec_st_cpu": chart_data_rec_st_cpu,
+                "chart_data_rec_st_memory": chart_data_rec_st_memory,
+                "chart_data_rec_mt_cpu": chart_data_rec_mt_cpu,
+                "chart_data_rec_mt_memory": chart_data_rec_mt_memory,
+                "chart_data_rec_lt_cpu": chart_data_rec_lt_cpu,
+                "chart_data_rec_lt_memory": chart_data_rec_lt_memory
             }
         )
 
@@ -551,12 +707,17 @@ async def generate_jsons(request: Request,
                 interval_time_in_mins = interval_time * 60
         total_entries = int(total_duration_in_mins / interval_time_in_mins)
 
+    scenario = scenario.strip()
+    if scenario not in KruizasterConsts.SCENARIOS:
+        scenario = KruizasterConsts.NO_DISASTER
+
     # Check if experiment name is not None
     if experiment_name is not None or experiment_name != "":
 
         # Create Experiment
         create_exp_response, return_json = Utils.create_kruize_experiment(exp_name=experiment_name,
-                                                                          interval_time_in_mins=interval_time_in_mins)
+                                                                          interval_time_in_mins=interval_time_in_mins,
+                                                                          scenario=scenario)
 
         # Check if experiment is created
         if create_exp_response == 200 or create_exp_response == 201:

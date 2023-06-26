@@ -1,6 +1,8 @@
+import os
 class Constants:
     VERSION                                         = "version"
     EXPERIMENT_NAME                                 = "experiment_name"
+    EXPERIMENT                                      = "experiment"
     CLUSTER_NAME                                    = "cluster_name"
     PERFORMANCE_PROFILE                             = "performance_profile"
     MODE                                            = "mode"
@@ -75,6 +77,12 @@ class Constants:
     ZERO_CPUS_RECORDS                               = "zero_cpu_recording"
     ZERO_MEMORY_RECORDS                             = "zero_memory_recording"
     IDLE_CPU                                        = "cpu_idle"
+    MEMORY_METRICS_MISSING                          = "memory_metrics_missing"
+    CPU_METRICS_MISSING                             = "cpu_metrics_missing"
+    CPU_REQUEST_NOT_SET                             = "cpu_request_not_set"
+    CPU_LIMIT_NOT_SET                               = "cpu_limit_not_set"
+    MEMORY_REQUEST_NOT_SET                          = "memory_request_not_set"
+    MEMORY_LIMIT_NOT_SET                            = "memory_limit_not_set"
 
     SCENARIO                                        = "scenario"
 
@@ -83,7 +91,13 @@ class Constants:
         NO_DISASTER,
         ZERO_CPUS_RECORDS,
         ZERO_MEMORY_RECORDS,
-        IDLE_CPU
+        IDLE_CPU,
+        MEMORY_METRICS_MISSING,
+        CPU_METRICS_MISSING,
+        CPU_REQUEST_NOT_SET,
+        CPU_LIMIT_NOT_SET,
+        MEMORY_REQUEST_NOT_SET,
+        MEMORY_LIMIT_NOT_SET
     ]
 
     ADJECTIVES                  = [
@@ -261,6 +275,13 @@ class Constants:
     MEDIUM_TERM                                     = "medium_term"
     LONG_TERM                                       = "long_term"
 
+    HOME_PATH                                       = os.path.expanduser("~")
+    DATA_DIR                                        = ".kruizaster_data"
+    DATA_PATH                                       = os.path.join(HOME_PATH, DATA_DIR)
+    CREATE_EXPERIMENT                               = "create_experiment"
+    RESULTS_DIR                                     = "update_results"
+    RECOMMENDATIONS_DIR                             = "kruize_recommendations"
+
 
 
 
@@ -268,7 +289,7 @@ class Constants:
         class Kruize:
             class ServicePaths:
                 BASE_URL                                = "http://192.168.49.2"
-                PORT                                    = 31869
+                PORT                                    = 32695
                 CREATE_EXP_PATH                         = "/createExperiment"
                 UPDATE_RESULTS_PATH                     = "/updateResults"
                 CREATE_PP_PATH                          = "/createPerformanceProfile"
@@ -277,6 +298,8 @@ class Constants:
             class ServicePaths:
                 ROOT                                    = "/"
                 CREATE_DISASTER                         = "/create_disaster"
+                CREATE_REPLAY                           = "/create_replay"
+                GENERATE_REPLAY                         = "/generate_replay"
                 TEST                                    = "/test"
                 UPDATES_SOCKET                          = "/update_socket/{experiment_name}"
                 VIEW_EXPERIMENT                         = "/view/{experiment_name}/"

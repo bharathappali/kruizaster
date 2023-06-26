@@ -107,6 +107,174 @@ def get_results_of_scenario(scenario: str, metric: str):
             value_field = Utils.generate_random_float(KruizasterConsts.MIN_MEMORY,
                                                       KruizasterConsts.MAX_MEMORY)
 
+    elif scenario == KruizasterConsts.MEMORY_METRICS_MISSING:
+        if metric in KruizasterConsts.CPU_METRICS:
+            avg_field = Utils.generate_random_float(KruizasterConsts.MIN_AVG_CPU,
+                                                    KruizasterConsts.MAX_AVG_CPU)
+            sum_field = Utils.generate_random_int(KruizasterConsts.MIN_PODS,
+                                                  KruizasterConsts.MAX_PODS) * avg_field
+
+            max_field = Utils.generate_random_float(avg_field,
+                                                    KruizasterConsts.MAX_MAX_CPU)
+
+            min_field = Utils.generate_random_float(KruizasterConsts.MIN_MIN_CPU,
+                                                    avg_field)
+
+            value_field = Utils.generate_random_float(KruizasterConsts.MIN_CPU,
+                                                      KruizasterConsts.MAX_CPU)
+        else:
+            return None
+
+    elif scenario == KruizasterConsts.CPU_METRICS_MISSING:
+        if metric in KruizasterConsts.MEMORY_METRICS:
+            avg_field = Utils.generate_random_float(KruizasterConsts.MIN_AVG_MEMORY,
+                                                    KruizasterConsts.MAX_AVG_MEMORY)
+            sum_field = Utils.generate_random_int(KruizasterConsts.MIN_PODS,
+                                                  KruizasterConsts.MAX_PODS) * avg_field
+
+            max_field = Utils.generate_random_float(avg_field,
+                                                    KruizasterConsts.MAX_MAX_MEMORY)
+
+            min_field = Utils.generate_random_float(KruizasterConsts.MIN_MIN_MEMORY,
+                                                    avg_field)
+
+            value_field = Utils.generate_random_float(KruizasterConsts.MIN_MEMORY,
+                                                      KruizasterConsts.MAX_MEMORY)
+        else:
+            return None
+
+    elif scenario == KruizasterConsts.CPU_REQUEST_NOT_SET:
+        if metric == KruizasterConsts.CPU_REQUEST:
+            return None
+        if metric in KruizasterConsts.CPU_METRICS:
+            avg_field = Utils.generate_random_float(KruizasterConsts.MIN_AVG_CPU,
+                                                    KruizasterConsts.MAX_AVG_CPU)
+            sum_field = Utils.generate_random_int(KruizasterConsts.MIN_PODS,
+                                                  KruizasterConsts.MAX_PODS) * avg_field
+
+            max_field = Utils.generate_random_float(avg_field,
+                                                    KruizasterConsts.MAX_MAX_CPU)
+
+            min_field = Utils.generate_random_float(KruizasterConsts.MIN_MIN_CPU,
+                                                    avg_field)
+
+            value_field = Utils.generate_random_float(KruizasterConsts.MIN_CPU,
+                                                      KruizasterConsts.MAX_CPU)
+
+        if metric in KruizasterConsts.MEMORY_METRICS:
+            avg_field = Utils.generate_random_float(KruizasterConsts.MIN_AVG_MEMORY,
+                                                    KruizasterConsts.MAX_AVG_MEMORY)
+            sum_field = Utils.generate_random_int(KruizasterConsts.MIN_PODS,
+                                                  KruizasterConsts.MAX_PODS) * avg_field
+
+            max_field = Utils.generate_random_float(avg_field,
+                                                    KruizasterConsts.MAX_MAX_MEMORY)
+
+            min_field = Utils.generate_random_float(KruizasterConsts.MIN_MIN_MEMORY,
+                                                    avg_field)
+
+            value_field = Utils.generate_random_float(KruizasterConsts.MIN_MEMORY,
+                                                      KruizasterConsts.MAX_MEMORY)
+
+    elif scenario == KruizasterConsts.CPU_LIMIT_NOT_SET:
+        if metric == KruizasterConsts.CPU_LIMIT:
+            return None
+        if metric in KruizasterConsts.CPU_METRICS:
+            avg_field = Utils.generate_random_float(KruizasterConsts.MIN_AVG_CPU,
+                                                    KruizasterConsts.MAX_AVG_CPU)
+            sum_field = Utils.generate_random_int(KruizasterConsts.MIN_PODS,
+                                                  KruizasterConsts.MAX_PODS) * avg_field
+
+            max_field = Utils.generate_random_float(avg_field,
+                                                    KruizasterConsts.MAX_MAX_CPU)
+
+            min_field = Utils.generate_random_float(KruizasterConsts.MIN_MIN_CPU,
+                                                    avg_field)
+
+            value_field = Utils.generate_random_float(KruizasterConsts.MIN_CPU,
+                                                      KruizasterConsts.MAX_CPU)
+
+        if metric in KruizasterConsts.MEMORY_METRICS:
+            avg_field = Utils.generate_random_float(KruizasterConsts.MIN_AVG_MEMORY,
+                                                    KruizasterConsts.MAX_AVG_MEMORY)
+            sum_field = Utils.generate_random_int(KruizasterConsts.MIN_PODS,
+                                                  KruizasterConsts.MAX_PODS) * avg_field
+
+            max_field = Utils.generate_random_float(avg_field,
+                                                    KruizasterConsts.MAX_MAX_MEMORY)
+
+            min_field = Utils.generate_random_float(KruizasterConsts.MIN_MIN_MEMORY,
+                                                    avg_field)
+
+            value_field = Utils.generate_random_float(KruizasterConsts.MIN_MEMORY,
+                                                      KruizasterConsts.MAX_MEMORY)
+
+    elif scenario == KruizasterConsts.MEMORY_REQUEST_NOT_SET:
+        if metric == KruizasterConsts.MEMORY_REQUEST:
+            return None
+        if metric in KruizasterConsts.CPU_METRICS:
+            avg_field = Utils.generate_random_float(KruizasterConsts.MIN_AVG_CPU,
+                                                    KruizasterConsts.MAX_AVG_CPU)
+            sum_field = Utils.generate_random_int(KruizasterConsts.MIN_PODS,
+                                                  KruizasterConsts.MAX_PODS) * avg_field
+
+            max_field = Utils.generate_random_float(avg_field,
+                                                    KruizasterConsts.MAX_MAX_CPU)
+
+            min_field = Utils.generate_random_float(KruizasterConsts.MIN_MIN_CPU,
+                                                    avg_field)
+
+            value_field = Utils.generate_random_float(KruizasterConsts.MIN_CPU,
+                                                      KruizasterConsts.MAX_CPU)
+
+        if metric in KruizasterConsts.MEMORY_METRICS:
+            avg_field = Utils.generate_random_float(KruizasterConsts.MIN_AVG_MEMORY,
+                                                    KruizasterConsts.MAX_AVG_MEMORY)
+            sum_field = Utils.generate_random_int(KruizasterConsts.MIN_PODS,
+                                                  KruizasterConsts.MAX_PODS) * avg_field
+
+            max_field = Utils.generate_random_float(avg_field,
+                                                    KruizasterConsts.MAX_MAX_MEMORY)
+
+            min_field = Utils.generate_random_float(KruizasterConsts.MIN_MIN_MEMORY,
+                                                    avg_field)
+
+            value_field = Utils.generate_random_float(KruizasterConsts.MIN_MEMORY,
+                                                      KruizasterConsts.MAX_MEMORY)
+
+    elif scenario == KruizasterConsts.MEMORY_LIMIT_NOT_SET:
+        if metric == KruizasterConsts.MEMORY_LIMIT:
+            return None
+        if metric in KruizasterConsts.CPU_METRICS:
+            avg_field = Utils.generate_random_float(KruizasterConsts.MIN_AVG_CPU,
+                                                    KruizasterConsts.MAX_AVG_CPU)
+            sum_field = Utils.generate_random_int(KruizasterConsts.MIN_PODS,
+                                                  KruizasterConsts.MAX_PODS) * avg_field
+
+            max_field = Utils.generate_random_float(avg_field,
+                                                    KruizasterConsts.MAX_MAX_CPU)
+
+            min_field = Utils.generate_random_float(KruizasterConsts.MIN_MIN_CPU,
+                                                    avg_field)
+
+            value_field = Utils.generate_random_float(KruizasterConsts.MIN_CPU,
+                                                      KruizasterConsts.MAX_CPU)
+
+        if metric in KruizasterConsts.MEMORY_METRICS:
+            avg_field = Utils.generate_random_float(KruizasterConsts.MIN_AVG_MEMORY,
+                                                    KruizasterConsts.MAX_AVG_MEMORY)
+            sum_field = Utils.generate_random_int(KruizasterConsts.MIN_PODS,
+                                                  KruizasterConsts.MAX_PODS) * avg_field
+
+            max_field = Utils.generate_random_float(avg_field,
+                                                    KruizasterConsts.MAX_MAX_MEMORY)
+
+            min_field = Utils.generate_random_float(KruizasterConsts.MIN_MIN_MEMORY,
+                                                    avg_field)
+
+            value_field = Utils.generate_random_float(KruizasterConsts.MIN_MEMORY,
+                                                      KruizasterConsts.MAX_MEMORY)
+
 
 
     values = {

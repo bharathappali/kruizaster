@@ -180,15 +180,33 @@
         </div>
         <div class="h-100 result-block" id="recommendations-chart-block" style="display: none">
           <div class="columns is-gapless h-100 mask-dark-600 curved-border">
-            <div class="column h-100 is-centered p-sm" style="padding: 20px !important">
+            <div class="column h-100 is-centered p-sm scroll-vertical" style="padding: 30px !important">
               <h1 class="subtitle is-5 text-white text-center w-100 spaced-bold text-uppercase">Recommendation chart</h1>
               <h1 class="subtitle is-7 text-white text-center w-100 spaced-bold text-uppercase">Short Term</h1>
-              <div class="columns h-screen-30">
+              <div class="columns h-screen-30" style="border: 1px solid #FFFFFF; border-radius: 10px">
                 <div class="column flex-center">
-                  <canvas id="recommendation-cpu-chart-canvas"></canvas>
+                  <canvas id="recommendation-st-cpu-chart-canvas"></canvas>
                 </div>
                 <div class="column flex-center">
-                  <canvas id="recommendation-memory-chart-canvas"></canvas>
+                  <canvas id="recommendation-st-memory-chart-canvas"></canvas>
+                </div>
+              </div>
+              <h1 class="subtitle is-7 text-white text-center w-100 spaced-bold text-uppercase">Medium Term</h1>
+              <div class="columns h-screen-30" style="border: 1px solid #FFFFFF; border-radius: 10px">
+                <div class="column flex-center">
+                  <canvas id="recommendation-mt-cpu-chart-canvas"></canvas>
+                </div>
+                <div class="column flex-center">
+                  <canvas id="recommendation-mt-memory-chart-canvas"></canvas>
+                </div>
+              </div>
+              <h1 class="subtitle is-7 text-white text-center w-100 spaced-bold text-uppercase">Long Term</h1>
+              <div class="columns h-screen-30" style="border: 1px solid #FFFFFF; border-radius: 10px">
+                <div class="column flex-center">
+                  <canvas id="recommendation-lt-cpu-chart-canvas"></canvas>
+                </div>
+                <div class="column flex-center">
+                  <canvas id="recommendation-lt-memory-chart-canvas"></canvas>
                 </div>
               </div>
             </div>
@@ -271,13 +289,6 @@
 
   var memory_data = {{ chart_data_memory | tojson }};
 
-  var cpu_rec_data = {{ chart_data_rec_cpu | tojson }};
-
-  var memory_rec_data = {{ chart_data_rec_memory | tojson }};
-
-  console.log(cpu_rec_data);
-  console.log(memory_rec_data);
-
   // Extract labels and values from the data
   var cpu_labels = cpu_data.name;
   var cpu_datasets = [
@@ -343,28 +354,6 @@
           borderWidth: 1
         },
     ];
-
-  var cpu_rec_labels = cpu_rec_data.labels;
-  var cpu_rec_datasets = [
-        {
-          label: "CPU cores",
-          data: cpu_rec_data.data,
-          backgroundColor: ['#00DFA2'],
-          borderColor: ['#00DFA2'],
-          borderWidth: 1
-        }
-  ];
-
-  var memory_rec_labels = memory_rec_data.labels;
-  var memory_rec_datasets = [
-        {
-          label: 'Memory MiB',
-          data: memory_rec_data.data,
-          backgroundColor:  ['#F6FA70'],
-          borderColor:  ['#F6FA70'],
-          borderWidth: 1
-        }
-  ];
 
   // Create the chart
   var ctx_cpu = document.getElementById('update-results-cpu-chart-canvas').getContext('2d');
@@ -440,13 +429,41 @@
     }
   });
 
+  // Short Term Charts
+
+  var cpu_rec_st_data = {{ chart_data_rec_st_cpu | tojson }};
+
+  var memory_rec_st_data = {{ chart_data_rec_st_memory | tojson }};
+
+  var cpu_rec_st_labels = cpu_rec_st_data.labels;
+  var cpu_rec_st_datasets = [
+        {
+          label: "CPU cores",
+          data: cpu_rec_st_data.data,
+          backgroundColor: ['#00DFA2'],
+          borderColor: ['#00DFA2'],
+          borderWidth: 1
+        }
+  ];
+
+  var memory_rec_st_labels = memory_rec_st_data.labels;
+  var memory_rec_st_datasets = [
+        {
+          label: 'Memory MiB',
+          data: memory_rec_st_data.data,
+          backgroundColor:  ['#F6FA70'],
+          borderColor:  ['#F6FA70'],
+          borderWidth: 1
+        }
+  ];
+
   // Create the chart
-  var ctx_cpu_rec = document.getElementById('recommendation-cpu-chart-canvas').getContext('2d');
-  var chart = new Chart(ctx_cpu_rec, {
+  var ctx_cpu_rec_st = document.getElementById('recommendation-st-cpu-chart-canvas').getContext('2d');
+  var chart = new Chart(ctx_cpu_rec_st, {
     type: 'bar',
     data: {
-      labels: cpu_rec_labels,
-      datasets: cpu_rec_datasets
+      labels: cpu_rec_st_labels,
+      datasets: cpu_rec_st_datasets
     },
     options: {
       scales: {
@@ -478,12 +495,218 @@
   });
 
   // Create the chart
-  var ctx_memory_rec = document.getElementById('recommendation-memory-chart-canvas').getContext('2d');
-  var chart = new Chart(ctx_memory_rec, {
+  var ctx_memory_rec_st = document.getElementById('recommendation-st-memory-chart-canvas').getContext('2d');
+  var chart = new Chart(ctx_memory_rec_st, {
     type: 'bar',
     data: {
-      labels: memory_rec_labels,
-      datasets: memory_rec_datasets
+      labels: memory_rec_st_labels,
+      datasets: memory_rec_st_datasets
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks:{
+            color: 'white'
+          },
+        },
+        x: {
+          ticks:{
+            color: 'white'
+          },
+        }
+      },
+      plugins: {
+        title: {
+          display: true,
+          text: 'Memory Recommendations',
+          color: 'white'
+        },
+        legend: {
+          labels: {
+            color: 'white'
+          }
+        }
+      }
+    }
+  });
+
+
+  // Medium Term Charts
+
+  var cpu_rec_mt_data = {{ chart_data_rec_mt_cpu | tojson }};
+
+  var memory_rec_mt_data = {{ chart_data_rec_mt_memory | tojson }};
+
+  var cpu_rec_mt_labels = cpu_rec_mt_data.labels;
+  var cpu_rec_mt_datasets = [
+        {
+          label: "CPU cores",
+          data: cpu_rec_mt_data.data,
+          backgroundColor: ['#00DFA2'],
+          borderColor: ['#00DFA2'],
+          borderWidth: 1
+        }
+  ];
+
+  var memory_rec_mt_labels = memory_rec_mt_data.labels;
+  var memory_rec_mt_datasets = [
+        {
+          label: 'Memory MiB',
+          data: memory_rec_mt_data.data,
+          backgroundColor:  ['#F6FA70'],
+          borderColor:  ['#F6FA70'],
+          borderWidth: 1
+        }
+  ];
+
+  // Create the chart
+  var ctx_cpu_rec_mt = document.getElementById('recommendation-mt-cpu-chart-canvas').getContext('2d');
+  var chart = new Chart(ctx_cpu_rec_mt, {
+    type: 'bar',
+    data: {
+      labels: cpu_rec_mt_labels,
+      datasets: cpu_rec_mt_datasets
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks:{
+            color: 'white'
+          },
+        },
+        x: {
+          ticks:{
+            color: 'white'
+          },
+        }
+      },
+      plugins: {
+        title: {
+          display: true,
+          text: 'CPU Recommendations',
+          color: 'white'
+        },
+        legend: {
+          labels: {
+            color: 'white'
+          }
+        }
+      }
+    }
+  });
+
+  // Create the chart
+  var ctx_memory_rec_mt = document.getElementById('recommendation-mt-memory-chart-canvas').getContext('2d');
+  var chart = new Chart(ctx_memory_rec_mt, {
+    type: 'bar',
+    data: {
+      labels: memory_rec_mt_labels,
+      datasets: memory_rec_mt_datasets
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks:{
+            color: 'white'
+          },
+        },
+        x: {
+          ticks:{
+            color: 'white'
+          },
+        }
+      },
+      plugins: {
+        title: {
+          display: true,
+          text: 'Memory Recommendations',
+          color: 'white'
+        },
+        legend: {
+          labels: {
+            color: 'white'
+          }
+        }
+      }
+    }
+  });
+
+
+  // Long Term Charts
+
+  var cpu_rec_lt_data = {{ chart_data_rec_lt_cpu | tojson }};
+
+  var memory_rec_lt_data = {{ chart_data_rec_lt_memory | tojson }};
+
+  var cpu_rec_lt_labels = cpu_rec_lt_data.labels;
+  var cpu_rec_lt_datasets = [
+        {
+          label: "CPU cores",
+          data: cpu_rec_lt_data.data,
+          backgroundColor: ['#00DFA2'],
+          borderColor: ['#00DFA2'],
+          borderWidth: 1
+        }
+  ];
+
+  var memory_rec_lt_labels = memory_rec_lt_data.labels;
+  var memory_rec_lt_datasets = [
+        {
+          label: 'Memory MiB',
+          data: memory_rec_lt_data.data,
+          backgroundColor:  ['#F6FA70'],
+          borderColor:  ['#F6FA70'],
+          borderWidth: 1
+        }
+  ];
+
+  // Create the chart
+  var ctx_cpu_rec_lt = document.getElementById('recommendation-lt-cpu-chart-canvas').getContext('2d');
+  var chart = new Chart(ctx_cpu_rec_lt, {
+    type: 'bar',
+    data: {
+      labels: cpu_rec_lt_labels,
+      datasets: cpu_rec_lt_datasets
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks:{
+            color: 'white'
+          },
+        },
+        x: {
+          ticks:{
+            color: 'white'
+          },
+        }
+      },
+      plugins: {
+        title: {
+          display: true,
+          text: 'CPU Recommendations',
+          color: 'white'
+        },
+        legend: {
+          labels: {
+            color: 'white'
+          }
+        }
+      }
+    }
+  });
+
+  // Create the chart
+  var ctx_memory_rec_lt = document.getElementById('recommendation-lt-memory-chart-canvas').getContext('2d');
+  var chart = new Chart(ctx_memory_rec_lt, {
+    type: 'bar',
+    data: {
+      labels: memory_rec_lt_labels,
+      datasets: memory_rec_lt_datasets
     },
     options: {
       scales: {
