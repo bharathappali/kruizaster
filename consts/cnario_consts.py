@@ -55,6 +55,13 @@ class Constants:
     MEMORY_USAGE                                    = "memoryUsage"
     MEMORY_RSS                                      = "memoryRSS"
 
+    REQUIRED_METRICS                                = [
+        CPU_USAGE,
+        CPU_THROTTLE,
+        MEMORY_RSS,
+        MEMORY_USAGE
+    ]
+
     CPU_METRICS                     = [
         CPU_USAGE,
         CPU_LIMIT,
@@ -83,6 +90,14 @@ class Constants:
     CPU_LIMIT_NOT_SET                               = "cpu_limit_not_set"
     MEMORY_REQUEST_NOT_SET                          = "memory_request_not_set"
     MEMORY_LIMIT_NOT_SET                            = "memory_limit_not_set"
+    ONLY_REQUIRED_SET                               = "only_required_set"
+    RESOURCE_OPTIMISED                              = "resource_optimised"
+    CPU_OPTIMISED                                   = "cpu_optimised"
+    MEMORY_OPTIMISED                                = "memory_optimised"
+    ONLY_CPU_REQUESTS_OPTIMISED                     = "cpu_requests_optimised"
+    ONLY_CPU_LIMITS_OPTIMISED                       = "cpu_limits_optimised"
+    ONLY_MEMORY_REQUESTS_OPTIMISED                  = "memory_requests_optimised"
+    ONLY_MEMORY_LIMITS_OPTIMISED                    = "memory_limits_optimised"
 
     SCENARIO                                        = "scenario"
 
@@ -97,7 +112,15 @@ class Constants:
         CPU_REQUEST_NOT_SET,
         CPU_LIMIT_NOT_SET,
         MEMORY_REQUEST_NOT_SET,
-        MEMORY_LIMIT_NOT_SET
+        MEMORY_LIMIT_NOT_SET,
+        ONLY_REQUIRED_SET,
+        RESOURCE_OPTIMISED,
+        CPU_OPTIMISED,
+        MEMORY_OPTIMISED,
+        ONLY_CPU_REQUESTS_OPTIMISED,
+        ONLY_CPU_LIMITS_OPTIMISED,
+        ONLY_MEMORY_REQUESTS_OPTIMISED,
+        ONLY_MEMORY_LIMITS_OPTIMISED
     ]
 
     ADJECTIVES                  = [
@@ -223,6 +246,10 @@ class Constants:
     MIN_MAX_MEMORY                                  = 500.00
     MAX_MAX_MEMORY                                  = MAX_MEMORY
 
+    OPTIMISED_CPU                                   = 3
+    OPTIMISED_MEMORY                                = 300
+
+
     MAX_PODS                                        = 1
     MIN_PODS                                        = 1
 
@@ -289,7 +316,7 @@ class Constants:
         class Kruize:
             class ServicePaths:
                 BASE_URL                                = "http://192.168.49.2"
-                PORT                                    = 32695
+                PORT                                    = 31420
                 CREATE_EXP_PATH                         = "/createExperiment"
                 UPDATE_RESULTS_PATH                     = "/updateResults"
                 CREATE_PP_PATH                          = "/createPerformanceProfile"
@@ -305,5 +332,7 @@ class Constants:
                 VIEW_EXPERIMENT                         = "/view/{experiment_name}/"
                 VIEW_EXPERIMENT_RESULTS                 = "/view/{experiment_name}/result/{interval_end_time}"
                 LIST_EXPERIMENTS                        = "/list_experiments"
+                UPLOAD_CSV                              = "/upload_csv"
+                UPLOAD_CSV_PAGE                         = "/upload_csv_page"
 
 

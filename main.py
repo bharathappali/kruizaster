@@ -1,6 +1,6 @@
 import time
 from datetime import datetime,timedelta
-from fastapi import FastAPI, Request, Form
+from fastapi import FastAPI, Request, Form, UploadFile, File
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from consts.cnario_consts import Constants as KruizasterConsts
@@ -13,6 +13,7 @@ import threading
 import json
 import uvicorn
 import signal
+import csv
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
@@ -212,7 +213,8 @@ async def home(request: Request):
             "scenarios": KruizasterConsts.SCENARIOS,
             "experiment_name": exp_name,
             "interval_duration_opts": KruizasterConsts.INTERVAL_DURATION_OPTS,
-            "create_disaster_path": KruizasterConsts.ServiceInfo.Kruizaster.ServicePaths.CREATE_DISASTER
+            "create_disaster_path": KruizasterConsts.ServiceInfo.Kruizaster.ServicePaths.CREATE_DISASTER,
+            "upload_csv_url": KruizasterConsts.ServiceInfo.Kruizaster.ServicePaths.UPLOAD_CSV_PAGE,
         }
     )
 
@@ -818,6 +820,41 @@ async def generate_jsons(request: Request,
                 }
             )
 
+@app.get(KruizasterConsts.ServiceInfo.Kruizaster.ServicePaths.UPLOAD_CSV_PAGE)
+async def upload_csv_page(request: Request):
+    return templates.TemplateResponse(
+        "upload_csv.html",
+        {
+            "request": request,
+            "upload_csv_url": KruizasterConsts.ServiceInfo.Kruizaster.ServicePaths.UPLOAD_CSV,
+        }
+    )
+
+
+@app.post(KruizasterConsts.ServiceInfo.Kruizaster.ServicePaths.UPLOAD_CSV)
+async def upload_csv(file: UploadFile = File(...)):
+    # Read the uploaded CSV file
+    contents = await file.read()
+
+    # Decode the contents as text
+    decoded_contents = contents.decode("utf-8")
+
+    # Create a CSV reader object
+    reader = csv.reader(decoded_contents.splitlines())
+
+    # Process the rows of the CSV file
+    for row in reader:
+        # Access individual columns using index
+        column1 = row[0]
+        column2 = row[1]
+        column3 = row[2]
+        column4 = row[3]
+        # ... process the columns as needed
+
+        # Print the values or perform any desired operations
+        print(column1, column2, column3, column4)
+
+    return {"message": "CSV file uploaded and processed successfully"}
 
 def shutdown_handler(signum, frame):
     # Add any clean up we need for data structures to release memory
