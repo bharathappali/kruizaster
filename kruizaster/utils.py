@@ -261,3 +261,24 @@ def get_kruize_recommendations(exp_name: str, interval_end_time: str):
     else:
         return_val = response.json()
     return response.status_code, return_val
+
+
+def update_kruize_recommendations(exp_name: str, interval_end_time: str):
+    url_to_hit = get_url_with_params(
+            base_url=KruizasterSettings.KRUIZE_UPDATE_REC_URL,
+            params={
+                KruizasterConsts.EXPERIMENT_NAME: exp_name,
+                KruizasterConsts.INTERVAL_END_TIME: interval_end_time
+            }
+        )
+
+    response = requests.post(url_to_hit)
+    return_val = None
+    if response.status_code == 200 or response.status_code == 201:
+        return_val = response.json()
+        if isinstance(return_val, list):
+            if len(return_val) > 0:
+                return_val = return_val[0]
+    else:
+        return_val = response.json()
+    return response.status_code, return_val

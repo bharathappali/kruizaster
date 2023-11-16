@@ -114,7 +114,7 @@ async def process_create_exp_update_results(websocket: WebSocket, experiment_nam
         # Check if day is greater than 1 and proceed to get recommendations
         if day > 1:
             end_time_string = entry_min_list[rec_counter][KruizasterConsts.INTERVAL_END_TIME]
-            recommendation_response_code, recommendation_template = Utils.get_kruize_recommendations(
+            recommendation_response_code, recommendation_template = Utils.update_kruize_recommendations(
                                                                                 exp_name=experiment_name,
                                                                                 interval_end_time=end_time_string)
             recommendation_content = {
@@ -156,7 +156,7 @@ async def process_create_exp_update_results(websocket: WebSocket, experiment_nam
 
     for counter in range(rec_counter, len(entry_min_list)):
         end_time_string = entry_min_list[rec_counter][KruizasterConsts.INTERVAL_END_TIME]
-        recommendation_response_code, recommendation_template = Utils.get_kruize_recommendations(
+        recommendation_response_code, recommendation_template = Utils.update_kruize_recommendations(
             exp_name=experiment_name,
             interval_end_time=end_time_string)
         recommendation_content = {
@@ -754,6 +754,10 @@ async def generate_jsons(request: Request,
                         day_entry_id = 0
                     # As I told you we increment :P
                     day_entry_id = day_entry_id + 1
+
+                    if scenario == KruizasterConsts.LONG_TIME_GAP and entry_id == total_entries:
+                        entry_start_time = entry_start_time + timedelta(hours=KruizasterConsts.LONG_TIME_GAP_IN_HOURS)
+
                     # Travel a bit forward in time and calculate end time (Consumes some PYM Particles :D)
                     entry_end_time = entry_start_time + timedelta(minutes=interval_time_in_mins)
                     # Convert start time to string -> To have less drama when we are accessing from dict or for matching

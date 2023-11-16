@@ -98,6 +98,7 @@ class Constants:
     ONLY_CPU_LIMITS_OPTIMISED                       = "cpu_limits_optimised"
     ONLY_MEMORY_REQUESTS_OPTIMISED                  = "memory_requests_optimised"
     ONLY_MEMORY_LIMITS_OPTIMISED                    = "memory_limits_optimised"
+    LONG_TIME_GAP                                   = "long_time_gap"
 
     SCENARIO                                        = "scenario"
 
@@ -120,7 +121,8 @@ class Constants:
         ONLY_CPU_REQUESTS_OPTIMISED,
         ONLY_CPU_LIMITS_OPTIMISED,
         ONLY_MEMORY_REQUESTS_OPTIMISED,
-        ONLY_MEMORY_LIMITS_OPTIMISED
+        ONLY_MEMORY_LIMITS_OPTIMISED,
+        LONG_TIME_GAP
     ]
 
     ADJECTIVES                  = [
@@ -309,18 +311,23 @@ class Constants:
     RESULTS_DIR                                     = "update_results"
     RECOMMENDATIONS_DIR                             = "kruize_recommendations"
 
+    LONG_TIME_GAP_IN_HOURS                          = 24
+
 
 
 
     class ServiceInfo:
         class Kruize:
             class ServicePaths:
-                BASE_URL                                = "http://192.168.49.2"
-                PORT                                    = 31420
+                BASE_URL                                = os.environ.get("KRUIZE_API_URL")
+                PORT                                    = os.environ.get("KRUIZE_API_PORT")
                 CREATE_EXP_PATH                         = "/createExperiment"
                 UPDATE_RESULTS_PATH                     = "/updateResults"
                 CREATE_PP_PATH                          = "/createPerformanceProfile"
                 LIST_REC_PATH                           = "/listRecommendations"
+                UPDATE_RECOMMENDATIONS_PATH             = "/updateRecommendations"
+
+
         class Kruizaster:
             class ServicePaths:
                 ROOT                                    = "/"

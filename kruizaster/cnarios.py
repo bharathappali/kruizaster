@@ -8,6 +8,10 @@ def get_results_of_scenario(scenario: str, metric: str):
     if scenario not in KruizasterConsts.SCENARIOS:
         scenario = KruizasterConsts.NO_DISASTER
 
+    if scenario == KruizasterConsts.LONG_TIME_GAP:
+        scenario = KruizasterConsts.NO_DISASTER
+
+
     # Generate fields for Default and No Disaster Scenario
     if scenario == KruizasterConsts.DEFAULT or scenario == KruizasterConsts.NO_DISASTER:
         # Generate CPU Fields
