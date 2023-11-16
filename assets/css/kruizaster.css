@@ -35,6 +35,13 @@ body {
 .no-scroll-horizontal {
 	overflow-x: hidden !important;
 }
+.h-2 {
+    height: 2% !important;
+}
+
+.h-3 {
+    height: 3% !important;
+}
 
 .h-5 {
 	height: 5% !important;
@@ -110,6 +117,14 @@ body {
 
 .h-95 {
 	height: 95% !important;
+}
+
+.h-97 {
+    height: 97% !important;
+}
+
+.h-98 {
+    height: 98% !important;
 }
 
 .h-100 {
@@ -374,7 +389,7 @@ body {
     color: #ffffff !important;
     border-radius: 20px;
     padding: 2rem;
-    max-height: 85vh;
+    max-height: 80vh;
 }
 .header-entry-column {
     margin-top: 2px;
@@ -393,7 +408,7 @@ body {
 }
 
 .list-container {
-    max-height: 80vh;
+    max-height: 60vh;
 }
 
 .text-white {
@@ -406,6 +421,37 @@ body {
 
 .float-right {
     float: right !important;
+}
+
+.result-block {
+    padding: 10px 5px 10px 5px  !important;
+}
+
+.p-sm {
+    padding: 10px !important;
+}
+
+.curved-border {
+    border-radius: 10px !important;
+}
+
+.inactive-result {
+    background: rgba(255, 255, 255, 0.1)
+}
+
+.result-block-item {
+    margin-top: 5px !important;
+    border-radius: 10px;
+}
+
+.inactive-result:hover {
+    background: rgba(0, 0, 0, 0.3) !important;
+}
+
+.flex-center {
+	display: flex;
+  	justify-content: center;
+  	align-items: center;
 }
 
 .loading {

@@ -10,3 +10,4 @@ class KruizasterSettings:
     KRUIZE_UPDATE_RESULTS_URL                       = KRUIZE_URL + KruizasterConsts.ServiceInfo.Kruize.ServicePaths.UPDATE_RESULTS_PATH
     KRUIZE_CREATE_PP_URL                            = KRUIZE_URL + KruizasterConsts.ServiceInfo.Kruize.ServicePaths.CREATE_PP_PATH
     KRUIZE_LIST_REC_URL                             = KRUIZE_URL + KruizasterConsts.ServiceInfo.Kruize.ServicePaths.LIST_REC_PATH
+    KRUIZE_UPDATE_REC_URL                           = KRUIZE_URL + KruizasterConsts.ServiceInfo.Kruize.ServicePaths.UPDATE_RECOMMENDATIONS_PATH
