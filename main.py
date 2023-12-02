@@ -14,6 +14,7 @@ import json
 import uvicorn
 import signal
 import csv
+import random
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
@@ -772,8 +773,14 @@ async def generate_jsons(request: Request,
                         KruizasterConsts.INTERVAL_START_TIME: start_time_string,
                         KruizasterConsts.INTERVAL_END_TIME: end_time_string
                     })
-                    # The future has become present (It's jus we are progressing to next iteration)
-                    entry_start_time = entry_end_time
+                    if scenario == KruizasterConsts.DUPLICATE_ENTRIES:
+                        rand_choice = random.choice([True, False])
+                        if entry_id > 50 and rand_choice:
+                            # The future has become present (It's jus we are progressing to next iteration)
+                            entry_start_time = entry_end_time
+                    else:
+                        # The future has become present (It's jus we are progressing to next iteration)
+                        entry_start_time = entry_end_time
 
                 # Create a template for experiment schema to store in dict
                 exp_data_content = {

@@ -99,6 +99,7 @@ class Constants:
     ONLY_MEMORY_REQUESTS_OPTIMISED                  = "memory_requests_optimised"
     ONLY_MEMORY_LIMITS_OPTIMISED                    = "memory_limits_optimised"
     LONG_TIME_GAP                                   = "long_time_gap"
+    DUPLICATE_ENTRIES                               = "duplicate_entries"
 
     SCENARIO                                        = "scenario"
 
@@ -122,7 +123,8 @@ class Constants:
         ONLY_CPU_LIMITS_OPTIMISED,
         ONLY_MEMORY_REQUESTS_OPTIMISED,
         ONLY_MEMORY_LIMITS_OPTIMISED,
-        LONG_TIME_GAP
+        LONG_TIME_GAP,
+        DUPLICATE_ENTRIES
     ]
 
     ADJECTIVES                  = [
